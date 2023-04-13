@@ -38,8 +38,7 @@ while run:
     win.blit(img, map)
     pygame.draw.rect(win,color=(156,0,36), rect=(800,800,50,50))
     win.blit(bruh, dingus)
-    if event.type == pygame.MOUSEBUTTONDOWN:
-        run = False
+    if 
     CLOCK.tick(60)
     pygame.display.update()
 pygame.quit()
