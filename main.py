@@ -32,11 +32,18 @@ class Boss(pygame.sprite.Sprite):
         self.y = y
         self.hp = 3
         self.canShoot=True
+        self.dead = False
         if self.type == 1:
             self.test = True
             self.image = pygame.image.load("img/boss.png").convert()
             self.rect = self.image.get_rect(topleft = (x,y))
     def update(self):
+        if self.hp == 0:
+            if self.dead != True:
+                self.death = pygame.time.get_ticks()
+            self.dead = True
+            if pygame.time.get_ticks() - self.death >3000:
+                self.kill()
         if self.rect.x > 1920-self.rect.width:
             self.rect.x -= 5
         else:
@@ -49,11 +56,9 @@ class Boss(pygame.sprite.Sprite):
                 bullet_group.add(bullet)
                 self.canShoot = False
             if self.test == False:
-                if pygame.time.get_ticks() - self.timer >5000:
+                if pygame.time.get_ticks() - self.timer >6000:
                     self.canShoot = True
                     self.timer = pygame.time.get_ticks()
-        if self.hp == 0:
-            self.kill()
 
 
 class Enemy(pygame.sprite.Sprite):
@@ -98,16 +103,27 @@ class Bullet(pygame.sprite.Sprite):
         if self.type == 1:
             self.rect.x -= 10
             self.rect.y -= 2
-        if self.type == 2 or self.type == 4 :
+        if self.type == 2:
             self.rect.x -= 10
         if self.type == 3:
             self.rect.x -= 10
             self.rect.y += 2
-        if self.rect.x < 0-self.rect.width or (player1.windwall_rect.colliderect(self.rect) and keys[pygame.K_SPACE]):
-            self.kill()
+        if player1.type == 1:
+            if self.rect.x < 0-self.rect.width or (player1.windwall_rect.colliderect(self.rect) and keys[pygame.K_SPACE] and player1.cooldown == False and self.type != 4 and self.type != 5):
+                self.kill()
         if self.type == 4:
-            if player1.windwall_rect.colliderect(self.rect) and keys[pygame.K_SPACE]:
+            self.rect.x -= 10
+            if player1.player_rect.y >= self.rect.y:
+                self.rect.y +=1
+            else:
+                self.rect.y -=1
+            if player1.windwall_rect.colliderect(self.rect) and keys[pygame.K_SPACE] and player1.cooldown == False:
                 boss1.hp -=1
+                self.type = 5
+        if self.type == 5:
+            self.rect.x += 50
+            if self.rect.colliderect(boss1.rect):
+                self.kill()
         if player1.player_rect.colliderect(self.rect):
             player1.Alive = False
         
@@ -118,6 +134,7 @@ class Player(pygame.sprite.Sprite):
         self.x = 50
         self.y = 50
         self.Alive = True
+        self.cooldown = False
         if self.type == 1: #Eagle
             self.player_surf0 = pygame.image.load("img/pitie.png").convert()
             self.player_surf = pygame.transform.scale_by(self.player_surf0,1/3)
@@ -126,7 +143,8 @@ class Player(pygame.sprite.Sprite):
             self.windwall_surf = pygame.image.load("img/goomba.png").convert()
             self.windwall_rect = self.windwall_surf.get_rect(topleft = (self.player_rect.x,self.player_rect.y))
         if self.type == 2:#Oiseau 2
-            self.player_surf = pygame.image.load("img/pitie.png").convert()
+            self.player_surf0 = pygame.image.load("img/pitie.png").convert()
+            self.player_surf = pygame.transform.scale_by(self.player_surf0,1/4)
             self.player_rect = self.player_surf.get_rect(topleft = (x,y))
             self.height = self.player_surf.get_height()
         if self.type == 3:#Oiseau 3
@@ -143,11 +161,19 @@ class Player(pygame.sprite.Sprite):
             self.height = self.player_surf.get_height()
 
     def update(self):
-        self.windwall_rect.x = self.player_rect.x+self.player_rect.width
-        self.windwall_rect.y = self.player_rect.y
         if self.type == 1:
-            self.timer = pygame.time.get_ticks()
-
+            self.windwall_rect.x = self.player_rect.x+self.player_rect.width
+            self.windwall_rect.y = self.player_rect.y
+            if keys[pygame.K_SPACE]:
+                if self.cooldown == False:
+                    self.timer = pygame.time.get_ticks()
+                    self.cooldown = True
+                if pygame.time.get_ticks() - self.timer > 3000:
+                    self.cooldown = False
+level1_surf = pygame.image.load("img/goomba.png").convert()
+level1_rect = level1_surf.get_rect(topleft = (x,y))
+level3_surf = pygame.image.load("img/goomba.png").convert()
+level3_rect = level3_surf.get_rect(topleft = (x+500,y))
 player1 = Player(1)
 player2 = Player(2)
 player3 = Player(3)
@@ -158,16 +184,27 @@ enemy1 = Enemy(2,1500,700)
 enemy2 = Enemy(1,4000,0)
 enemy3 = Enemy(2,6000,700)
 enemy4 = Enemy(3,8000,0)
-enemyList = [enemy1,enemy2,enemy3,enemy4]
+enemy5 = Enemy(2,1500,700)
+enemy6 = Enemy(1,4000,0)
+enemy7 = Enemy(2,6000,700)
+enemy8 = Enemy(3,8000,0)
+enemyList1 = [enemy1,enemy2,enemy3,enemy4]
+enemyList2 = [enemy5,enemy6,enemy7,enemy8]
+allEnemyLists = [enemyList1,enemyList2]
 boss1 = Boss(1,10000,500)
 player_group = pygame.sprite.Group()
 enemy_group = pygame.sprite.Group()
 bullet_group = pygame.sprite.Group()
 boss_group = pygame.sprite.Group()
 player_group.add(player1)
-for i in range(len(enemyList)):
-    enemy_group.add(enemyList[i])
+for i in range(len(playerList)):
+    player_group.add(playerList[i])
+for i in range(len(allEnemyLists)):
+    for j in range(len(enemyList1)):
+        enemy_group.add(allEnemyLists[i][j])
 boss_group.add(boss1)
+menu = True
+level_selected = 0
 while run:
     for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -175,49 +212,72 @@ while run:
     keys = pygame.key.get_pressed()
     if keys[pygame.K_ESCAPE]:
         run = False
-    while player1.Alive:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
+    if menu:
+        while(menu):
+            point = pygame.mouse.get_pos()
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    run = False
+                    menu = False
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    if event.button == 1 and level1_rect.collidepoint(point):
+                        menu = False
+                        level_selected = 0
+                    if event.button == 1 and level3_rect.collidepoint(point):
+                        menu = False
+                        level_selected = 1
+            keys = pygame.key.get_pressed()
+            if keys[pygame.K_ESCAPE]:
                 run = False
+                menu = False
+            win.blit(level1_surf,level1_rect)
+            win.blit(level3_surf,level3_rect)
+            pygame.display.update()
+    else:
+        player1 = playerList[level_selected]
+        while player1.Alive:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    run = False
+                    player1.Alive = False
+            bullet_group.update()
+            player_group.update()
+            enemy_group.update()
+            boss_group.update()
+            keys = pygame.key.get_pressed()
+            if keys[pygame.K_ESCAPE]:
                 player1.Alive = False
-        player_group.update()
-        bullet_group.update()
-        enemy_group.update()
-        boss_group.update()
-        keys = pygame.key.get_pressed()
-        if keys[pygame.K_ESCAPE]:
-            player1.Alive = False
-            run = False
-        if keys[pygame.K_LEFT] and player1.player_rect.x > 0:
-            player1.player_rect.x-=vel
-        if keys[pygame.K_RIGHT] and player1.player_rect.x < 200:
-            player1.player_rect.x+=vel
-        if keys[pygame.K_UP] and player1.player_rect.y > 0:
-            player1.player_rect.y -= vel
-            for i in range(len(enemyList)):
-                if enemyList[i].type != 2 and enemyList[i].type != 3:
-                    if player1.player_rect.colliderect(enemyList[i].rect):
-                        player1.player_rect.y += vel
-        if keys[pygame.K_DOWN]and player1.player_rect.y < 1080 - player1.height:
-            player1.player_rect.y += vel
-            for i in range(len(enemyList)):
-                if enemyList[i].type != 2:
-                    if player1.player_rect.colliderect(enemyList[i].rect):
-                        player1.player_rect.y -= vel
-        win.fill((0,0,0))
-        for i in range(len(enemyList)):
-            if enemyList[i].type != 2:
-                if player1.player_rect.colliderect(enemyList[i].rect):
-                    player1.Alive=False
-            enemy_group.draw(win)
-        win.blit(player1.player_surf,player1.player_rect)
-        if player1.type == 1 and keys[pygame.K_SPACE]:
-            win.blit(player1.windwall_surf,player1.windwall_rect)
-        bullet_group.draw(win)
-        boss_group.draw(win)
-        fps_counter()
-        pygame.display.update()
-        clock.tick(60)
+                run = False
+            if keys[pygame.K_LEFT] and player1.player_rect.x > 0:
+                player1.player_rect.x-=vel
+            if keys[pygame.K_RIGHT] and player1.player_rect.x < 200:
+                player1.player_rect.x+=vel
+            if keys[pygame.K_UP] and player1.player_rect.y > 0:
+                player1.player_rect.y -= vel
+                for i in range(len(allEnemyLists[level_selected])):
+                    if allEnemyLists[level_selected][i].type != 2 and allEnemyLists[level_selected][i].type != 3:
+                        if player1.player_rect.colliderect(allEnemyLists[level_selected][i].rect):
+                            player1.player_rect.y += vel
+            if keys[pygame.K_DOWN]and player1.player_rect.y < 1080 - player1.height:
+                player1.player_rect.y += vel
+                for i in range(len(allEnemyLists[level_selected])):
+                    if allEnemyLists[level_selected][i].type != 2:
+                        if player1.player_rect.colliderect(allEnemyLists[level_selected][i].rect):
+                            player1.player_rect.y -= vel
+            win.fill((0,0,0))
+            for i in range(len(allEnemyLists[level_selected])):
+                if allEnemyLists[level_selected][i].type != 2:
+                    if player1.player_rect.colliderect(allEnemyLists[level_selected][i].rect):
+                        player1.Alive=False
+                enemy_group.draw(win)
+            win.blit(player1.player_surf,player1.player_rect)
+            bullet_group.draw(win)
+            if player1.type == 1 and keys[pygame.K_SPACE] and player1.cooldown == False:
+                win.blit(player1.windwall_surf,player1.windwall_rect)
+            boss_group.draw(win)
+            fps_counter()
+            pygame.display.update()
+            clock.tick(60)
     
 pygame.quit()
 #
