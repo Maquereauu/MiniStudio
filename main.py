@@ -13,12 +13,13 @@ vel = 15
 CLOCK = pygame.time.Clock()
 pos = pygame.mouse.get_pos()
 img = pygame.image.load("img/menu.png").convert_alpha()
-bruh =pygame.image.load("img/dingus.jpg").convert_alpha()
 img = pygame.transform.scale(img , (1920 , 1080))
+bruh =pygame.image.load("img/dingus.jpg").convert_alpha()
+bruh = pygame.transform.scale(bruh , (50 , 50))
 while run:
     map = img.get_rect(topleft = (0,0))
     dingus = bruh.get_rect(topleft = (x,y))
-    pygame.time.delay(100)
+    pygame.time.delay(1)
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
              run = False
@@ -35,9 +36,10 @@ while run:
                 y += vel
     win.fill((0,0,0))
     win.blit(img, map)
+    pygame.draw.rect(win,color=(156,0,36), rect=(800,800,50,50))
     win.blit(bruh, dingus)
     if event.type == pygame.MOUSEBUTTONDOWN:
         run = False
-    CLOCK.tick(165)
+    CLOCK.tick(60)
     pygame.display.update()
 pygame.quit()
