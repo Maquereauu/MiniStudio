@@ -51,11 +51,14 @@ class Enemy(pygame.sprite.Sprite):
         self.x = x
         self.y = y
         self.canShoot=True
-        if self.type == 1:
+        if self.type == 1:#mur
             self.surf = pygame.image.load("img/goomba.png").convert()
             self.rect = self.surf.get_rect(topleft = (x,y))
-        if self.type == 2:
+        if self.type == 2:#chasseur
             self.surf = pygame.image.load("img/chasseur.png").convert()
+            self.rect = self.surf.get_rect(topleft = (x,y))
+        if self.type == 3:#volant
+            self.surf = pygame.image.load("img/volant.png").convert()
             self.rect = self.surf.get_rect(topleft = (x,y))
     def update(self):
         self.rect.x -= 50
@@ -90,6 +93,8 @@ class Bullet(pygame.sprite.Sprite):
             self.rect.y += 25
         if self.rect.x < 0-self.rect.width or (player1.windwall_rect.colliderect(self.rect) and keys[pygame.K_SPACE]):
             self.kill()
+        if player1.player_rect.colliderect(self.rect):
+            player1.Alive = False
         
 class Player(pygame.sprite.Sprite):
     def __init__(self,type):
@@ -97,24 +102,25 @@ class Player(pygame.sprite.Sprite):
         self.type = type
         self.x = 50
         self.y = 50
-        if self.type == 1:
+        self.Alive = True
+        if self.type == 1: #Eagle
             self.player_surf0 = pygame.image.load("img/pitie.png").convert()
             self.player_surf = pygame.transform.scale_by(self.player_surf0,1/3)
             self.player_rect = self.player_surf.get_rect(topleft = (x,y))
             self.height = self.player_surf.get_height()
-        if self.type == 2:
+        if self.type == 2:#Oiseau 2
             self.player_surf = pygame.image.load("img/pitie.png").convert()
             self.player_rect = self.player_surf.get_rect(topleft = (x,y))
             self.height = self.player_surf.get_height()
-        if self.type == 3:
+        if self.type == 3:#Oiseau 3
             self.player_surf = pygame.image.load("img/pitie.png").convert()
             self.player_rect = self.player_surf.get_rect(topleft = (x,y))
             self.height = self.player_surf.get_height()
-        if self.type == 4:
+        if self.type == 4:#Oiseau 4
             self.player_surf = pygame.image.load("img/pitie.png").convert()
             self.player_rect = self.player_surf.get_rect(topleft = (x,y))
             self.height = self.player_surf.get_height()
-        if self.type == 5:
+        if self.type == 5:#Oiseau 5
             self.player_surf = pygame.image.load("img/pitie.png").convert()
             self.player_rect = self.player_surf.get_rect(topleft = (x,y))
             self.height = self.player_surf.get_height()
@@ -130,10 +136,10 @@ player5 = Player(5)
 playerList = [player1,player2,player3,player4,player5]
 enemy1 = Enemy(2,1500,700)
 enemy2 = Enemy(1,4000,0)
-enemy3 = Enemy(2,6000,700)
+enemy3 = Enemy(2,6000,1400)
+enemy3 = Enemy(3,8000,700)
 enemyList = [enemy1,enemy2,enemy3]
 boss1 = Boss(1,10000,500)
-alive = True
 player_group = pygame.sprite.Group()
 enemy_group = pygame.sprite.Group()
 bullet_group = pygame.sprite.Group()
@@ -150,19 +156,19 @@ while run:
     keys = pygame.key.get_pressed()
     if keys[pygame.K_ESCAPE]:
         run = False
-    while alive:
+    while player1.Alive:
         pygame.time.delay(100)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
-                alive = False
+                player1.Alive = False
         player_group.update()
         bullet_group.update()
         enemy_group.update()
         boss_group.update()
         keys = pygame.key.get_pressed()
         if keys[pygame.K_ESCAPE]:
-            alive = False
+            player1.Alive = False
             run = False
         if keys[pygame.K_LEFT] and player1.player_rect.x > 0:
             player1.player_rect.x-=vel
@@ -181,7 +187,7 @@ while run:
         win.fill((0,0,0))
         for i in range(len(enemyList)):
             if player1.player_rect.colliderect(enemyList[i].rect):
-                alive=False
+                player1.Alive=False
             win.blit(enemyList[i].surf,enemyList[i].rect)
         win.blit(player1.player_surf,player1.player_rect)
         if player1.type == 1 and keys[pygame.K_SPACE]:
