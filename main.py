@@ -1,29 +1,39 @@
+from typing import KeysView
 import pygame
+import sys
 
 pygame.init()
-pygame.font.init()
-my_font = pygame.font.SysFont('Comic Sans MS', 30)
-text_surface = my_font.render('Heheheha', False, (255, 0, 0))
 pygame.display.set_caption("masterclass")
 win=pygame.display.set_mode((1920,1080))
+my_font = pygame.font.SysFont('Comic Sans MS', 30)
+text_surface = my_font.render('Heheheha', False, (255, 0, 0))
+run = True
+x= 40
+y= 40
+c1 = 0 
+c2 = 0
+width = 50
+height = 50
+vel = 15
+clock = pygame.time.Clock()
+pos = pygame.mouse.get_pos()
+img = pygame.image.load("img/menu.png").convert_alpha()
+img = pygame.transform.scale(img , (1920 , 1080))
+bruh =pygame.image.load("img/dingus.jpg").convert_alpha()
+bruh = pygame.transform.scale(bruh , (50 , 50))
+start = pygame.image.load("img/start.png").convert_alpha()
+start = pygame.transform.scale(start , (200 , 200))
 model_enemy1 = pygame.image.load("img/goomba.png").convert()
 model_enemy2 = pygame.image.load("img/chasseur.png").convert()
 model_enemy3 = pygame.image.load("img/volant.png").convert()
 model_bullet0= pygame.image.load("img/goomba.png").convert()
 model_bullet = pygame.transform.scale_by(model_bullet0,1/4)
-clock = pygame.time.Clock()
 
 def fps_counter():
     fps = str(int(clock.get_fps()))
     fps_t = my_font.render(fps , 1, pygame.Color("RED"))
     win.blit(fps_t,(0,0))
 
-run = True
-x= 40
-y= 40
-width = 50
-height = 50
-vel = 15
 class Boss(pygame.sprite.Sprite):
     def __init__(self,type,x,y):
         super().__init__()
@@ -174,6 +184,8 @@ level1_surf = pygame.image.load("img/goomba.png").convert()
 level1_rect = level1_surf.get_rect(topleft = (x,y))
 level3_surf = pygame.image.load("img/goomba.png").convert()
 level3_rect = level3_surf.get_rect(topleft = (x+500,y))
+map = img.get_rect(topleft = (0,0))
+start_rect = start.get_rect(topleft = (1675 , 375))
 player1 = Player(1)
 player2 = Player(2)
 player3 = Player(3)
@@ -204,7 +216,8 @@ for i in range(len(allEnemyLists)):
         enemy_group.add(allEnemyLists[i][j])
 boss_group.add(boss1)
 menu = True
-level_selected = 0
+level_selected = 1
+rect  = pygame.draw.rect(win,color=(156,0,36), rect=(1750,450,50,50))
 while run:
     for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -215,24 +228,41 @@ while run:
     if menu:
         while(menu):
             point = pygame.mouse.get_pos()
+            dingus = bruh.get_rect(topleft = (x,y))
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     run = False
                     menu = False
-                if event.type == pygame.MOUSEBUTTONDOWN:
-                    if event.button == 1 and level1_rect.collidepoint(point):
-                        menu = False
-                        level_selected = 0
-                    if event.button == 1 and level3_rect.collidepoint(point):
+                if dingus.colliderect(rect):
+                    if rect.colliderect(dingus):
+                        if keys[pygame.K_SPACE]:
+                            menu = False
+                            level_selected = 0
+                    if level3_rect.colliderect(dingus):
                         menu = False
                         level_selected = 1
             keys = pygame.key.get_pressed()
+            if keys[pygame.K_ESCAPE] or keys[pygame.KMOD_ALT] and keys[pygame.K_F4]:
+                run = False
+            if keys[pygame.K_LEFT] and x > 5:
+                        x-=vel
+            if keys[pygame.K_RIGHT] and x < 1915:
+                        x+=vel
+            if keys[pygame.K_UP] and y > 5:
+                        y -= vel
+            if keys[pygame.K_DOWN] and y < 1075:
+                        y += vel
             if keys[pygame.K_ESCAPE]:
                 run = False
                 menu = False
-            win.blit(level1_surf,level1_rect)
-            win.blit(level3_surf,level3_rect)
+            win.blit(img, map)
+            win.blit(bruh, dingus)
+            rect  = pygame.draw.rect(win,color=(156,0,36), rect=(1750,450,50,50))
+            if dingus.colliderect(rect):
+                win.blit(start, start_rect)
+            fps_counter()
             pygame.display.update()
+            clock.tick(60)
     else:
         player1 = playerList[level_selected]
         while player1.Alive:
@@ -277,7 +307,6 @@ while run:
             boss_group.draw(win)
             fps_counter()
             pygame.display.update()
-            clock.tick(60)
+            clock.tick(60   )
     
 pygame.quit()
-#
