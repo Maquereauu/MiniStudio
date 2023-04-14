@@ -1,3 +1,4 @@
+from typing import KeysView
 import pygame
 import sys
 
@@ -20,6 +21,8 @@ img = pygame.image.load("img/menu.png").convert_alpha()
 img = pygame.transform.scale(img , (1920 , 1080))
 bruh =pygame.image.load("img/dingus.jpg").convert_alpha()
 bruh = pygame.transform.scale(bruh , (50 , 50))
+start = pygame.image.load("img/start.png").convert_alpha()
+start = pygame.transform.scale(start , (200 , 200))
 model_enemy1 = pygame.image.load("img/goomba.png").convert()
 model_enemy2 = pygame.image.load("img/chasseur.png").convert()
 model_enemy3 = pygame.image.load("img/volant.png").convert()
@@ -182,6 +185,7 @@ level1_rect = level1_surf.get_rect(topleft = (x,y))
 level3_surf = pygame.image.load("img/goomba.png").convert()
 level3_rect = level3_surf.get_rect(topleft = (x+500,y))
 map = img.get_rect(topleft = (0,0))
+start_rect = start.get_rect(topleft = (1675 , 375))
 player1 = Player(1)
 player2 = Player(2)
 player3 = Player(3)
@@ -231,8 +235,9 @@ while run:
                     menu = False
                 if dingus.colliderect(rect):
                     if rect.colliderect(dingus):
-                        menu = False
-                        level_selected = 0
+                        if keys[pygame.K_SPACE]:
+                            menu = False
+                            level_selected = 0
                     if level3_rect.colliderect(dingus):
                         menu = False
                         level_selected = 1
@@ -251,9 +256,10 @@ while run:
                 run = False
                 menu = False
             win.blit(img, map)
-
             win.blit(bruh, dingus)
             rect  = pygame.draw.rect(win,color=(156,0,36), rect=(1750,450,50,50))
+            if dingus.colliderect(rect):
+                win.blit(start, start_rect)
             fps_counter()
             pygame.display.update()
             clock.tick(60)
