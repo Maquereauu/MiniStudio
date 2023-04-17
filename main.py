@@ -180,12 +180,9 @@ class Player(pygame.sprite.Sprite):
                     self.cooldown = True
                 if pygame.time.get_ticks() - self.timer > 3000:
                     self.cooldown = False
-level1_surf = pygame.image.load("img/goomba.png").convert()
-level1_rect = level1_surf.get_rect(topleft = (x,y))
-level3_surf = pygame.image.load("img/goomba.png").convert()
-level3_rect = level3_surf.get_rect(topleft = (x+500,y))
 map = img.get_rect(topleft = (0,0))
-start_rect = start.get_rect(topleft = (1675 , 375))
+start_rect1 = start.get_rect(topleft = (1675 , 375))
+start_rect2 = start.get_rect(topleft = (1425 , 125))
 player1 = Player(1)
 player2 = Player(2)
 player3 = Player(3)
@@ -217,7 +214,8 @@ for i in range(len(allEnemyLists)):
 boss_group.add(boss1)
 menu = True
 level_selected = 1
-rect  = pygame.draw.rect(win,color=(156,0,36), rect=(1750,450,50,50))
+level1_rect  = pygame.draw.rect(win,color=(156,0,36), rect=(1750,450,50,50))
+level2_rect  = pygame.draw.rect(win,color=(156,0,36), rect=(1500,200,50,50))
 while run:
     for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -233,12 +231,12 @@ while run:
                 if event.type == pygame.QUIT:
                     run = False
                     menu = False
-                if dingus.colliderect(rect):
-                    if rect.colliderect(dingus):
-                        if keys[pygame.K_SPACE]:
-                            menu = False
-                            level_selected = 0
-                    if level3_rect.colliderect(dingus):
+                if dingus.colliderect(level1_rect):
+                    if keys[pygame.K_SPACE]:
+                       menu = False
+                       level_selected = 0
+                if dingus.colliderect(level2_rect):
+                    if keys[pygame.K_SPACE]:
                         menu = False
                         level_selected = 1
             keys = pygame.key.get_pressed()
@@ -257,9 +255,12 @@ while run:
                 menu = False
             win.blit(img, map)
             win.blit(bruh, dingus)
-            rect  = pygame.draw.rect(win,color=(156,0,36), rect=(1750,450,50,50))
-            if dingus.colliderect(rect):
-                win.blit(start, start_rect)
+            level1_rect  = pygame.draw.rect(win,color=(156,0,36), rect=(1750,450,50,50))
+            level2_rect  = pygame.draw.rect(win,color=(156,0,36), rect=(1500,200,50,50))
+            if dingus.colliderect(level1_rect):
+                win.blit(start, start_rect1)
+            if dingus.colliderect(level2_rect):
+                win.blit(start, start_rect2)
             fps_counter()
             pygame.display.update()
             clock.tick(60)
@@ -307,6 +308,6 @@ while run:
             boss_group.draw(win)
             fps_counter()
             pygame.display.update()
-            clock.tick(60   )
+            clock.tick(144)
     
 pygame.quit()
