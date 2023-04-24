@@ -24,9 +24,9 @@ bruh = pygame.transform.scale(bruh , (50 , 50))
 start = pygame.image.load("img/start.png").convert_alpha()
 start = pygame.transform.scale(start , (200 , 200))
 sky = pygame.image.load("img/Sky_1.png").convert_alpha()
-sky = pygame.transform.scale(sky , (1920 , 1080))
+sky = pygame.transform.scale(sky , (5760 , 1080))
 ground = pygame.image.load("img/ground_1.png").convert_alpha()
-ground = pygame.transform.scale(ground, (1920 , 1080))
+ground = pygame.transform.scale(ground, (5760 , 1080))
 hp_bar = pygame.image.load("img/ProgressBar.png").convert_alpha()
 hp_bar = pygame.transform.scale(hp_bar, (850 , 500))
 model_enemy1 = pygame.image.load("img/goomba.png").convert()
@@ -57,6 +57,8 @@ class Boss(pygame.sprite.Sprite):
         if self.hp == 0:
             if self.dead != True:
                 self.death = pygame.time.get_ticks()
+                self.explosion = pygame.image.load("img/explosion.png").convert()
+                self.explosion = self.explosion.get_rect(topleft = (x,y))
             self.dead = True
             if pygame.time.get_ticks() - self.death >3000:
                 self.kill()
