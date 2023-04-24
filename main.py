@@ -14,7 +14,7 @@ c1 = 0
 c2 = 0
 width = 50
 height = 50
-vel = 15
+vel = 750
 clock = pygame.time.Clock()
 pos = pygame.mouse.get_pos()
 img = pygame.image.load("img/menu.png").convert_alpha()
@@ -54,19 +54,21 @@ class Boss(pygame.sprite.Sprite):
             self.dead = True
             if pygame.time.get_ticks() - self.death >3000:
                 self.kill()
+                player1.Alive = False
         if self.rect.x > 1920-self.rect.width:
-            self.rect.x -= 5
+            self.x -= 300 * delta_time 
+            self.rect.x = self.x
         else:
             if self.test:
                 self.timer = pygame.time.get_ticks()
                 self.test = False
         if self.type == 1:
-            if self.rect.x < 1920-self.rect.width and self.canShoot:
+            if self.rect.x <= 1920-self.rect.width and self.canShoot:
                 bullet = Bullet(4,self.rect.x,self.y)
                 bullet_group.add(bullet)
                 self.canShoot = False
             if self.test == False:
-                if pygame.time.get_ticks() - self.timer >6000:
+                if pygame.time.get_ticks() - self.timer > 6000:
                     self.canShoot = True
                     self.timer = pygame.time.get_ticks()
 
@@ -92,13 +94,14 @@ class Enemy(pygame.sprite.Sprite):
             self.isFlying = True
             self.image = model_enemy3
             self.rect = self.image.get_rect(topleft = (x,y))
-        if self.type == 5:#éolienne 
+        if self.type == 5:#éolienne
             self.image = model_enemy3
             self.rect = self.image.get_rect(topleft = (x,y))
 
 
     def update(self):
-        self.rect.x -= 5
+        self.x -= 300 * delta_time
+        self.rect.x = self.x
         if self.type == 2:
             if self.rect.x < 2000 and self.canShoot:
                 for i in range(1,4,1):
@@ -112,7 +115,8 @@ class Enemy(pygame.sprite.Sprite):
                     self.fly = False
                 if self.fly == False:
                     if self.isFlying:
-                        self.rect.y -= 5
+                        self.y -= 500 * delta_time
+                        self.rect.y = self.y
                         if pygame.time.get_ticks() - self.timer >2000:
                             self.fly = True
                             self.timer = pygame.time.get_ticks()
@@ -125,8 +129,6 @@ class Enemy(pygame.sprite.Sprite):
         if self.type == 5:
             if self.rect.collidepoint(pygame.mouse.get_pos()) and event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 self.kill()
-                
-
         if self.rect.x+5 < 0-self.rect.width:
             self.kill()
 
@@ -134,6 +136,8 @@ class Bullet(pygame.sprite.Sprite):
     def __init__(self,type,x,y):
         super().__init__()
         self.type = type
+        self.x = x
+        self.y = y
         if self.type != 4:
             self.image = model_bullet
             self.rect = self.image.get_rect(topleft = (x,y))
@@ -142,27 +146,36 @@ class Bullet(pygame.sprite.Sprite):
             self.rect = self.image.get_rect(topleft = (x,y))
     def update(self):
         if self.type == 1:
-            self.rect.x -= 10
-            self.rect.y -= 2
+            self.x -= 800 * delta_time 
+            self.y -= 400 * delta_time 
+            self.rect.x = self.x
+            self.rect.y = self.y
         if self.type == 2:
-            self.rect.x -= 10
+            self.x -= 800 * delta_time 
+            self.rect.x = self.x
         if self.type == 3:
-            self.rect.x -= 10
-            self.rect.y += 2
+            self.x -= 800 * delta_time 
+            self.y += 400 * delta_time 
+            self.rect.x = self.x
+            self.rect.y = self.y
         if player1.type == 1:
             if self.rect.x < 0-self.rect.width or (player1.windwall_rect.colliderect(self.rect) and keys[pygame.K_SPACE] and player1.cooldown == False and self.type != 4 and self.type != 5):
                 self.kill()
         if self.type == 4:
-            self.rect.x -= 10
+            self.x -= 800 * delta_time 
+            self.rect.x = self.x
             if player1.player_rect.y >= self.rect.y:
-                self.rect.y +=1
+                self.y += 100 * delta_time 
+                self.rect.y = self.y
             else:
-                self.rect.y -=1
+                self.y -= 100 * delta_time 
+                self.rect.y =self.y
             if player1.windwall_rect.colliderect(self.rect) and keys[pygame.K_SPACE] and player1.cooldown == False:
                 boss1.hp -=1
                 self.type = 5
         if self.type == 5:
-            self.rect.x += 50
+            self.x += 2000 * delta_time 
+            self.rect.x = self.x
             if self.rect.colliderect(boss1.rect):
                 self.kill()
         if player1.player_rect.colliderect(self.rect):
@@ -209,7 +222,7 @@ class Player(pygame.sprite.Sprite):
                 if self.cooldown == False:
                     self.timer = pygame.time.get_ticks()
                     self.cooldown = True
-                if pygame.time.get_ticks() - self.timer > 3000:
+                if pygame.time.get_ticks() - self.timer > 2000:
                     self.cooldown = False
 map = img.get_rect(topleft = (0,0))
 start_rect1 = start.get_rect(topleft = (1675 , 375))
@@ -230,25 +243,21 @@ enemy7 = Enemy(2,6000,700)
 enemy8 = Enemy(3,8000,0)
 enemy9 = Enemy(4,3000,700)
 enemy10 = Enemy(5,5000,700)
-enemyList1 = [enemy1,enemy2,enemy3,enemy4,enemy9,enemy10]
+enemyList1 = [enemy1,enemy2,enemy3,enemy4]
 enemyList2 = [enemy5,enemy6,enemy7,enemy8,enemy9,enemy10]
 allEnemyLists = [enemyList1,enemyList2]
 boss1 = Boss(1,10000,500)
+bossList = [boss1,boss1,boss1,boss1,boss1]
 player_group = pygame.sprite.Group()
 enemy_group = pygame.sprite.Group()
 bullet_group = pygame.sprite.Group()
 boss_group = pygame.sprite.Group()
-player_group.add(player1)
-for i in range(len(playerList)):
-    player_group.add(playerList[i])
-for i in range(len(allEnemyLists)):
-    for j in range(len(enemyList1)):
-        enemy_group.add(allEnemyLists[i][j])
-boss_group.add(boss1)
 menu = True
+ticks = 0
 level_selected = 1
 level1_rect  = pygame.draw.rect(win,color=(156,0,36), rect=(1750,450,50,50))
 level2_rect  = pygame.draw.rect(win,color=(156,0,36), rect=(1500,200,50,50))
+timer_windwall = 0
 while run:
     for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -258,6 +267,9 @@ while run:
         run = False
     if menu:
         while(menu):
+            time = pygame.time.get_ticks()
+            delta_time = (time - ticks) / 1000
+            ticks = time
             point = pygame.mouse.get_pos()
             dingus = bruh.get_rect(topleft = (x,y))
             for event in pygame.event.get():
@@ -276,13 +288,13 @@ while run:
             if keys[pygame.K_ESCAPE] or keys[pygame.KMOD_ALT] and keys[pygame.K_F4]:
                 run = False
             if keys[pygame.K_LEFT] and x > 5:
-                        x-=vel
+                        x-=vel * delta_time
             if keys[pygame.K_RIGHT] and x < 1915:
-                        x+=vel
+                        x+=vel * delta_time
             if keys[pygame.K_UP] and y > 5:
-                        y -= vel
+                        y -= vel * delta_time
             if keys[pygame.K_DOWN] and y < 1075:
-                        y += vel
+                        y += vel * delta_time
             if keys[pygame.K_ESCAPE]:
                 run = False
                 menu = False
@@ -294,12 +306,17 @@ while run:
                 win.blit(start, start_rect1)
             if dingus.colliderect(level2_rect):
                 win.blit(start, start_rect2)
-            fps_counter()
             pygame.display.update()
-            clock.tick(60)
-    else:
+    player_group.add(playerList[level_selected])
+    for j in range(len(allEnemyLists[level_selected])):
+            enemy_group.add(allEnemyLists[level_selected][j])
+    boss_group.add(bossList[level_selected])
+    if menu != True:
         player1 = playerList[level_selected]
         while player1.Alive:
+            time = pygame.time.get_ticks()
+            delta_time = (time - ticks) / 1000
+            ticks = time
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     run = False
@@ -313,21 +330,21 @@ while run:
                 player1.Alive = False
                 run = False
             if keys[pygame.K_LEFT] and player1.player_rect.x > 0:
-                player1.player_rect.x-=vel
+                player1.player_rect.x-=vel * delta_time
             if keys[pygame.K_RIGHT] and player1.player_rect.x < 200:
-                player1.player_rect.x+=vel
+                player1.player_rect.x+=vel * delta_time
             if keys[pygame.K_UP] and player1.player_rect.y > 0:
-                player1.player_rect.y -= vel
+                player1.player_rect.y -= vel * delta_time
                 for i in range(len(allEnemyLists[level_selected])):
                     if allEnemyLists[level_selected][i].type != 2 and allEnemyLists[level_selected][i].type != 3:
                         if player1.player_rect.colliderect(allEnemyLists[level_selected][i].rect):
-                            player1.player_rect.y += vel
+                            player1.player_rect.y += vel * delta_time
             if keys[pygame.K_DOWN]and player1.player_rect.y < 1080 - player1.height:
-                player1.player_rect.y += vel
+                player1.player_rect.y += vel * delta_time
                 for i in range(len(allEnemyLists[level_selected])):
                     if allEnemyLists[level_selected][i].type != 2:
                         if player1.player_rect.colliderect(allEnemyLists[level_selected][i].rect):
-                            player1.player_rect.y -= vel
+                            player1.player_rect.y -= vel * delta_time
             win.fill((0,0,0))
             for i in range(len(allEnemyLists[level_selected])):
                 if allEnemyLists[level_selected][i].type != 2:
@@ -336,11 +353,14 @@ while run:
                 enemy_group.draw(win)
             win.blit(player1.player_surf,player1.player_rect)
             bullet_group.draw(win)
+            if timer_windwall != 0:
+                if pygame.time.get_ticks() - timer_windwall < 500:
+                    win.blit(player1.windwall_surf,player1.windwall_rect)
+                else:
+                    timer_windwall = 0
+
             if player1.type == 1 and keys[pygame.K_SPACE] and player1.cooldown == False:
-                win.blit(player1.windwall_surf,player1.windwall_rect)
+                timer_windwall = pygame.time.get_ticks()
             boss_group.draw(win)
-            fps_counter()
             pygame.display.update()
-            clock.tick(60)
-    
 pygame.quit()
