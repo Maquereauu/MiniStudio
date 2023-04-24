@@ -45,9 +45,8 @@ class Boss(pygame.sprite.Sprite):
         super().__init__()
         self.type = type
         self.x = x
-        self.y = y #-130
+        self.y = y
         self.hp = 3
-        self.max_hp = self.hp
         self.canShoot=True
         self.dead = False
         if self.type == 1:
@@ -76,7 +75,6 @@ class Boss(pygame.sprite.Sprite):
                 if pygame.time.get_ticks() - self.timer >6000:
                     self.canShoot = True
                     self.timer = pygame.time.get_ticks()
-                    
 
 
 class Enemy(pygame.sprite.Sprite):
@@ -95,6 +93,15 @@ class Enemy(pygame.sprite.Sprite):
         if self.type == 3:#volant
             self.image = model_enemy3
             self.rect = self.image.get_rect(topleft = (x,y))
+        if self.type == 4:#sac plastique
+            self.fly = True
+            self.isFlying = True
+            self.image = model_enemy3
+            self.rect = self.image.get_rect(topleft = (x,y))
+        if self.type == 5:#éolienne 
+            self.image = model_enemy3
+            self.rect = self.image.get_rect(topleft = (x,y))
+
 
     def update(self):
         self.rect.x -= 5
@@ -104,6 +111,28 @@ class Enemy(pygame.sprite.Sprite):
                     bullet = Bullet(i,self.rect.x,self.y)
                     bullet_group.add(bullet)
                 self.canShoot = False
+        if self.type == 4:
+            if self.rect.x < 1800:
+                if self.fly:
+                    self.timer = pygame.time.get_ticks()
+                    self.fly = False
+                if self.fly == False:
+                    if self.isFlying:
+                        self.rect.y -= 5
+                        if pygame.time.get_ticks() - self.timer >2000:
+                            self.fly = True
+                            self.timer = pygame.time.get_ticks()
+                            self.isFlying = False
+                    else:
+                        if pygame.time.get_ticks() - self.timer >2000:
+                            self.fly = True
+                            self.timer = pygame.time.get_ticks()
+                            self.isFlying = True
+        if self.type == 5:
+            if self.rect.collidepoint(pygame.mouse.get_pos()) and event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                self.kill()
+                
+
         if self.rect.x+5 < 0-self.rect.width:
             self.kill()
 
@@ -151,11 +180,10 @@ class Player(pygame.sprite.Sprite):
         self.type = type
         self.x = 50
         self.y = 50
-        #self.hp = 3
         self.Alive = True
         self.cooldown = False
         if self.type == 1: #Eagle
-            self.player_surf0 = pygame.image.load("img/Bird.jpg").convert()
+            self.player_surf0 = pygame.image.load("img/pitie.png").convert()
             self.player_surf = pygame.transform.scale_by(self.player_surf0,1/3)
             self.player_rect = self.player_surf.get_rect(topleft = (x,y))
             self.height = self.player_surf.get_height()
@@ -178,17 +206,6 @@ class Player(pygame.sprite.Sprite):
             self.player_surf = pygame.image.load("img/pitie.png").convert()
             self.player_rect = self.player_surf.get_rect(topleft = (x,y))
             self.height = self.player_surf.get_height()
-            
-    def update_hp_bar(self, surface):
-        bar_color = (51, 204, 51)
-        back_bar_color = (230, 0, 0)
-        bar_position = [self.rect.x, self.rect.y, self.hp, 5]
-        back_bar_position = [self.rect.x, self.rect.y, self.max_hp, 5]
-        
-        pygame.draw.rect(surface, back_bar_color, back_bar_position)
-        pygame.draw.rect(surface, bar_color, bar_position)
-
-
 
     def update(self):
         if self.type == 1:
@@ -217,8 +234,10 @@ enemy5 = Enemy(2,1500,700)
 enemy6 = Enemy(1,4000,0)
 enemy7 = Enemy(2,6000,700)
 enemy8 = Enemy(3,8000,0)
-enemyList1 = [enemy1,enemy2,enemy3,enemy4]
-enemyList2 = [enemy5,enemy6,enemy7,enemy8]
+enemy9 = Enemy(4,3000,700)
+enemy10 = Enemy(5,5000,700)
+enemyList1 = [enemy1,enemy2,enemy3,enemy4,enemy9,enemy10]
+enemyList2 = [enemy5,enemy6,enemy7,enemy8,enemy9,enemy10]
 allEnemyLists = [enemyList1,enemyList2]
 boss1 = Boss(1,10000,500)
 player_group = pygame.sprite.Group()
@@ -287,9 +306,7 @@ while run:
     else:
         player1 = playerList[level_selected]
         while player1.Alive:
-            
             for event in pygame.event.get():
-                
                 if event.type == pygame.QUIT:
                     run = False
                     player1.Alive = False
@@ -317,7 +334,7 @@ while run:
                     if allEnemyLists[level_selected][i].type != 2:
                         if player1.player_rect.colliderect(allEnemyLists[level_selected][i].rect):
                             player1.player_rect.y -= vel
-            
+                            
             win.fill((0,0,0))
             win.blit(sky, (0, 0)) # elle est mal place 
             win.blit(ground, (0, 0))
@@ -327,17 +344,14 @@ while run:
                     if player1.player_rect.colliderect(allEnemyLists[level_selected][i].rect):
                         player1.Alive=False
                 enemy_group.draw(win)
-            
             win.blit(player1.player_surf,player1.player_rect)
             bullet_group.draw(win)
             if player1.type == 1 and keys[pygame.K_SPACE] and player1.cooldown == False:
                 win.blit(player1.windwall_surf,player1.windwall_rect)
             boss_group.draw(win)
-            
-            
-            
+
             fps_counter()
             pygame.display.update()
-            clock.tick(144)
+            clock.tick(60)
     
 pygame.quit()
