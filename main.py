@@ -8,8 +8,6 @@ win=pygame.display.set_mode((1920,1080))
 my_font = pygame.font.SysFont('Comic Sans MS', 30)
 text_surface = my_font.render('Heheheha', False, (255, 0, 0))
 run = True
-x= 40
-y= 40
 c1 = 0 
 c2 = 0
 width = 50
@@ -89,21 +87,25 @@ class Enemy(pygame.sprite.Sprite):
         if self.type == 1:#mur
             self.image = model_enemy1
             self.rect = self.image.get_rect(topleft = (x,y))
+            self.damage = 1000
         if self.type == 2:#chasseur
             self.image = model_enemy2
             self.rect = self.image.get_rect(topleft = (x,y))
+            self.damage = 0
         if self.type == 3:#volant
             self.image = model_enemy3
             self.rect = self.image.get_rect(topleft = (x,y))
+            self.damage = 50
         if self.type == 4:#sac plastique
             self.fly = True
             self.isFlying = True
             self.image = model_enemy3
             self.rect = self.image.get_rect(topleft = (x,y))
+            self.damage = 30
         if self.type == 5:#éolienne
             self.image = model_enemy3
             self.rect = self.image.get_rect(topleft = (x,y))
-
+            self.damage = 1000
 
     def update(self):
         self.x -= 300 * delta_time
@@ -185,7 +187,7 @@ class Bullet(pygame.sprite.Sprite):
             if self.rect.colliderect(boss1.rect):
                 self.kill()
         if player1.player_rect.colliderect(self.rect):
-            player1.Alive = False
+            player1.hp -= 10 
         
 class Player(pygame.sprite.Sprite):
     def __init__(self,type):
@@ -196,6 +198,8 @@ class Player(pygame.sprite.Sprite):
         self.Alive = True
         self.cooldown = False
         if self.type == 1: #Eagle
+            self.max_hp = 100
+            self.hp = self.max_hp
             self.player_surf0 = pygame.image.load("img/pitie.png").convert()
             self.player_surf = pygame.transform.scale_by(self.player_surf0,1/3)
             self.player_rect = self.player_surf.get_rect(topleft = (x,y))
@@ -203,6 +207,8 @@ class Player(pygame.sprite.Sprite):
             self.windwall_surf = pygame.image.load("img/Yasuo Windwall.jpg").convert()
             self.windwall_rect = self.windwall_surf.get_rect(topleft = (self.player_rect.x,self.player_rect.y))
         if self.type == 2:#Oiseau 2
+            self.max_hp = 80
+            self.hp = self.max_hp
             self.player_surf0 = pygame.image.load("img/pitie.png").convert()
             self.player_surf = pygame.transform.scale_by(self.player_surf0,1/4)
             self.player_rect = self.player_surf.get_rect(topleft = (x,y))
@@ -233,31 +239,6 @@ class Player(pygame.sprite.Sprite):
 map = img.get_rect(topleft = (0,0))
 start_rect1 = start.get_rect(topleft = (1675 , 375))
 start_rect2 = start.get_rect(topleft = (1425 , 125))
-player1 = Player(1)
-player2 = Player(2)
-player3 = Player(3)
-player4 = Player(4)
-player5 = Player(5)
-playerList = [player1,player2,player3,player4,player5]
-enemy1 = Enemy(2,1500,700)
-enemy2 = Enemy(1,4000,0)
-enemy3 = Enemy(2,6000,700)
-enemy4 = Enemy(3,8000,0)
-enemy5 = Enemy(2,1500,700)
-enemy6 = Enemy(1,4000,0)
-enemy7 = Enemy(2,6000,700)
-enemy8 = Enemy(3,8000,0)
-enemy9 = Enemy(4,3000,700)
-enemy10 = Enemy(5,5000,700)
-enemyList1 = [enemy1,enemy2,enemy3,enemy4]
-enemyList2 = [enemy5,enemy6,enemy7,enemy8,enemy9,enemy10]
-allEnemyLists = [enemyList1,enemyList2]
-boss1 = Boss(1,10000,500)
-bossList = [boss1,boss1,boss1,boss1,boss1]
-player_group = pygame.sprite.Group()
-enemy_group = pygame.sprite.Group()
-bullet_group = pygame.sprite.Group()
-boss_group = pygame.sprite.Group()
 menu = True
 ticks = 0
 level_selected = 1
@@ -265,6 +246,33 @@ level1_rect  = pygame.draw.rect(win,color=(156,0,36), rect=(1750,450,50,50))
 level2_rect  = pygame.draw.rect(win,color=(156,0,36), rect=(1500,200,50,50))
 timer_windwall = 0
 while run:
+    x= 40
+    y= 40
+    player1 = Player(1)
+    player2 = Player(2)
+    player3 = Player(3)
+    player4 = Player(4)
+    player5 = Player(5)
+    playerList = [player1,player2,player3,player4,player5]
+    enemy1 = Enemy(2,1500,700)
+    enemy2 = Enemy(1,4000,0)
+    enemy3 = Enemy(2,6000,700)
+    enemy4 = Enemy(3,8000,0)
+    enemy5 = Enemy(2,1500,700)
+    enemy6 = Enemy(1,4000,0)
+    enemy7 = Enemy(2,6000,700)
+    enemy8 = Enemy(3,8000,0)
+    enemy9 = Enemy(4,3000,700)
+    enemy10 = Enemy(5,5000,700)
+    enemyList1 = [enemy1,enemy2,enemy3,enemy4]
+    enemyList2 = [enemy5,enemy6,enemy7,enemy8,enemy9,enemy10]
+    allEnemyLists = [enemyList1,enemyList2]
+    boss1 = Boss(1,10000,500)
+    bossList = [boss1,boss1,boss1,boss1,boss1]
+    player_group = pygame.sprite.Group()
+    enemy_group = pygame.sprite.Group()
+    bullet_group = pygame.sprite.Group()
+    boss_group = pygame.sprite.Group()
     for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
@@ -317,6 +325,7 @@ while run:
     for j in range(len(allEnemyLists[level_selected])):
             enemy_group.add(allEnemyLists[level_selected][j])
     boss_group.add(bossList[level_selected])
+    player1.hp = playerList[level_selected].max_hp
     if menu != True:
         player1 = playerList[level_selected]
         while player1.Alive:
@@ -359,7 +368,7 @@ while run:
             for i in range(len(allEnemyLists[level_selected])):
                 if allEnemyLists[level_selected][i].type != 2:
                     if player1.player_rect.colliderect(allEnemyLists[level_selected][i].rect):
-                        player1.Alive=False
+                        player1.hp -= allEnemyLists[level_selected][i].damage
                 enemy_group.draw(win)
             win.blit(player1.player_surf,player1.player_rect)
             bullet_group.draw(win)
@@ -368,11 +377,11 @@ while run:
                     win.blit(player1.windwall_surf,player1.windwall_rect)
                 else:
                     timer_windwall = 0
-
             if player1.type == 1 and keys[pygame.K_SPACE] and player1.cooldown == False:
                 timer_windwall = pygame.time.get_ticks()
             boss_group.draw(win)
-
-            fps_counter()
             pygame.display.update()
+            if player1.hp <= 0:
+                menu = True
+                break
 pygame.quit()
