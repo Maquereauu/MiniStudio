@@ -87,6 +87,15 @@ class Enemy(pygame.sprite.Sprite):
         if self.type == 3:#volant
             self.image = model_enemy3
             self.rect = self.image.get_rect(topleft = (x,y))
+        if self.type == 4:#sac plastique
+            self.fly = True
+            self.isFlying = True
+            self.image = model_enemy3
+            self.rect = self.image.get_rect(topleft = (x,y))
+        if self.type == 5:#éolienne 
+            self.image = model_enemy3
+            self.rect = self.image.get_rect(topleft = (x,y))
+
 
     def update(self):
         self.rect.x -= 5
@@ -96,6 +105,28 @@ class Enemy(pygame.sprite.Sprite):
                     bullet = Bullet(i,self.rect.x,self.y)
                     bullet_group.add(bullet)
                 self.canShoot = False
+        if self.type == 4:
+            if self.rect.x < 1800:
+                if self.fly:
+                    self.timer = pygame.time.get_ticks()
+                    self.fly = False
+                if self.fly == False:
+                    if self.isFlying:
+                        self.rect.y -= 5
+                        if pygame.time.get_ticks() - self.timer >2000:
+                            self.fly = True
+                            self.timer = pygame.time.get_ticks()
+                            self.isFlying = False
+                    else:
+                        if pygame.time.get_ticks() - self.timer >2000:
+                            self.fly = True
+                            self.timer = pygame.time.get_ticks()
+                            self.isFlying = True
+        if self.type == 5:
+            if self.rect.collidepoint(pygame.mouse.get_pos()) and event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                self.kill()
+                
+
         if self.rect.x+5 < 0-self.rect.width:
             self.kill()
 
@@ -197,8 +228,10 @@ enemy5 = Enemy(2,1500,700)
 enemy6 = Enemy(1,4000,0)
 enemy7 = Enemy(2,6000,700)
 enemy8 = Enemy(3,8000,0)
-enemyList1 = [enemy1,enemy2,enemy3,enemy4]
-enemyList2 = [enemy5,enemy6,enemy7,enemy8]
+enemy9 = Enemy(4,3000,700)
+enemy10 = Enemy(5,5000,700)
+enemyList1 = [enemy1,enemy2,enemy3,enemy4,enemy9,enemy10]
+enemyList2 = [enemy5,enemy6,enemy7,enemy8,enemy9,enemy10]
 allEnemyLists = [enemyList1,enemyList2]
 boss1 = Boss(1,10000,500)
 player_group = pygame.sprite.Group()
@@ -308,6 +341,6 @@ while run:
             boss_group.draw(win)
             fps_counter()
             pygame.display.update()
-            clock.tick(144)
+            clock.tick(60)
     
 pygame.quit()
