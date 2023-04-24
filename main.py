@@ -1,6 +1,6 @@
-from typing import KeysView
+
 import pygame
-import sys
+
 
 pygame.init()
 pygame.display.set_caption("masterclass")
