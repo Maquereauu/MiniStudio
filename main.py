@@ -231,8 +231,8 @@ class Player(pygame.sprite.Sprite):
                 if pygame.time.get_ticks() - self.timer > 2000:
                     self.cooldown = False
 map = img.get_rect(topleft = (0,0))
-start_rect1 = start.get_rect(topleft = (1675 , 375))
-start_rect2 = start.get_rect(topleft = (1425 , 125))
+start_rect1 = start.get_rect(topleft = (275 , 675))
+start_rect2 = start.get_rect(topleft = (275 , 175))
 player1 = Player(1)
 player2 = Player(2)
 player3 = Player(3)
@@ -261,8 +261,8 @@ boss_group = pygame.sprite.Group()
 menu = True
 ticks = 0
 level_selected = 1
-level1_rect  = pygame.draw.rect(win,color=(156,0,36), rect=(1750,450,50,50))
-level2_rect  = pygame.draw.rect(win,color=(156,0,36), rect=(1500,200,50,50))
+level1_rect  = pygame.draw.rect(win,color=(156,0,36), rect=(350,750,50,50))
+level2_rect  = pygame.draw.rect(win,color=(156,0,36), rect=(350,250,50,50))
 timer_windwall = 0
 while run:
     for event in pygame.event.get():
@@ -306,8 +306,8 @@ while run:
                 menu = False
             win.blit(img, map)
             win.blit(bruh, dingus)
-            level1_rect  = pygame.draw.rect(win,color=(156,0,36), rect=(1750,450,50,50))
-            level2_rect  = pygame.draw.rect(win,color=(156,0,36), rect=(1500,200,50,50))
+            level1_rect  = pygame.draw.rect(win,color=(156,0,36), rect=(350,750,50,50))
+            level2_rect  = pygame.draw.rect(win,color=(156,0,36), rect=(350,250,50,50))
             if dingus.colliderect(level1_rect):
                 win.blit(start, start_rect1)
             if dingus.colliderect(level2_rect):
