@@ -23,8 +23,14 @@ bruh =pygame.image.load("img/dingus.jpg").convert_alpha()
 bruh = pygame.transform.scale(bruh , (50 , 50))
 start = pygame.image.load("img/start.png").convert_alpha()
 start = pygame.transform.scale(start , (200 , 200))
+sky = pygame.image.load("img/Sky_1.png").convert_alpha()
+sky = pygame.transform.scale(sky , (1920 , 1080))
+ground = pygame.image.load("img/ground_1.png").convert_alpha()
+ground = pygame.transform.scale(ground, (1920 , 1080))
+hp_bar = pygame.image.load("img/ProgressBar.png").convert_alpha()
+hp_bar = pygame.transform.scale(hp_bar, (850 , 500))
 model_enemy1 = pygame.image.load("img/goomba.png").convert()
-model_enemy2 = pygame.image.load("img/chasseur.png").convert()
+model_enemy2 = pygame.image.load("img/hunter.png").convert()
 model_enemy3 = pygame.image.load("img/volant.png").convert()
 model_bullet0= pygame.image.load("img/goomba.png").convert()
 model_bullet = pygame.transform.scale_by(model_bullet0,1/4)
@@ -87,6 +93,15 @@ class Enemy(pygame.sprite.Sprite):
         if self.type == 3:#volant
             self.image = model_enemy3
             self.rect = self.image.get_rect(topleft = (x,y))
+        if self.type == 4:#sac plastique
+            self.fly = True
+            self.isFlying = True
+            self.image = model_enemy3
+            self.rect = self.image.get_rect(topleft = (x,y))
+        if self.type == 5:#éolienne 
+            self.image = model_enemy3
+            self.rect = self.image.get_rect(topleft = (x,y))
+
 
     def update(self):
         self.rect.x -= 5
@@ -96,6 +111,28 @@ class Enemy(pygame.sprite.Sprite):
                     bullet = Bullet(i,self.rect.x,self.y)
                     bullet_group.add(bullet)
                 self.canShoot = False
+        if self.type == 4:
+            if self.rect.x < 1800:
+                if self.fly:
+                    self.timer = pygame.time.get_ticks()
+                    self.fly = False
+                if self.fly == False:
+                    if self.isFlying:
+                        self.rect.y -= 5
+                        if pygame.time.get_ticks() - self.timer >2000:
+                            self.fly = True
+                            self.timer = pygame.time.get_ticks()
+                            self.isFlying = False
+                    else:
+                        if pygame.time.get_ticks() - self.timer >2000:
+                            self.fly = True
+                            self.timer = pygame.time.get_ticks()
+                            self.isFlying = True
+        if self.type == 5:
+            if self.rect.collidepoint(pygame.mouse.get_pos()) and event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                self.kill()
+                
+
         if self.rect.x+5 < 0-self.rect.width:
             self.kill()
 
@@ -150,7 +187,7 @@ class Player(pygame.sprite.Sprite):
             self.player_surf = pygame.transform.scale_by(self.player_surf0,1/3)
             self.player_rect = self.player_surf.get_rect(topleft = (x,y))
             self.height = self.player_surf.get_height()
-            self.windwall_surf = pygame.image.load("img/goomba.png").convert()
+            self.windwall_surf = pygame.image.load("img/Yasuo Windwall.jpg").convert()
             self.windwall_rect = self.windwall_surf.get_rect(topleft = (self.player_rect.x,self.player_rect.y))
         if self.type == 2:#Oiseau 2
             self.player_surf0 = pygame.image.load("img/pitie.png").convert()
@@ -180,12 +217,9 @@ class Player(pygame.sprite.Sprite):
                     self.cooldown = True
                 if pygame.time.get_ticks() - self.timer > 3000:
                     self.cooldown = False
-level1_surf = pygame.image.load("img/goomba.png").convert()
-level1_rect = level1_surf.get_rect(topleft = (x,y))
-level3_surf = pygame.image.load("img/goomba.png").convert()
-level3_rect = level3_surf.get_rect(topleft = (x+500,y))
 map = img.get_rect(topleft = (0,0))
-start_rect = start.get_rect(topleft = (1675 , 375))
+start_rect1 = start.get_rect(topleft = (1675 , 375))
+start_rect2 = start.get_rect(topleft = (1425 , 125))
 player1 = Player(1)
 player2 = Player(2)
 player3 = Player(3)
@@ -200,8 +234,10 @@ enemy5 = Enemy(2,1500,700)
 enemy6 = Enemy(1,4000,0)
 enemy7 = Enemy(2,6000,700)
 enemy8 = Enemy(3,8000,0)
-enemyList1 = [enemy1,enemy2,enemy3,enemy4]
-enemyList2 = [enemy5,enemy6,enemy7,enemy8]
+enemy9 = Enemy(4,3000,700)
+enemy10 = Enemy(5,5000,700)
+enemyList1 = [enemy1,enemy2,enemy3,enemy4,enemy9,enemy10]
+enemyList2 = [enemy5,enemy6,enemy7,enemy8,enemy9,enemy10]
 allEnemyLists = [enemyList1,enemyList2]
 boss1 = Boss(1,10000,500)
 player_group = pygame.sprite.Group()
@@ -217,7 +253,8 @@ for i in range(len(allEnemyLists)):
 boss_group.add(boss1)
 menu = True
 level_selected = 1
-rect  = pygame.draw.rect(win,color=(156,0,36), rect=(1750,450,50,50))
+level1_rect  = pygame.draw.rect(win,color=(156,0,36), rect=(1750,450,50,50))
+level2_rect  = pygame.draw.rect(win,color=(156,0,36), rect=(1500,200,50,50))
 while run:
     for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -233,12 +270,12 @@ while run:
                 if event.type == pygame.QUIT:
                     run = False
                     menu = False
-                if dingus.colliderect(rect):
-                    if rect.colliderect(dingus):
-                        if keys[pygame.K_SPACE]:
-                            menu = False
-                            level_selected = 0
-                    if level3_rect.colliderect(dingus):
+                if dingus.colliderect(level1_rect):
+                    if keys[pygame.K_SPACE]:
+                       menu = False
+                       level_selected = 0
+                if dingus.colliderect(level2_rect):
+                    if keys[pygame.K_SPACE]:
                         menu = False
                         level_selected = 1
             keys = pygame.key.get_pressed()
@@ -257,9 +294,12 @@ while run:
                 menu = False
             win.blit(img, map)
             win.blit(bruh, dingus)
-            rect  = pygame.draw.rect(win,color=(156,0,36), rect=(1750,450,50,50))
-            if dingus.colliderect(rect):
-                win.blit(start, start_rect)
+            level1_rect  = pygame.draw.rect(win,color=(156,0,36), rect=(1750,450,50,50))
+            level2_rect  = pygame.draw.rect(win,color=(156,0,36), rect=(1500,200,50,50))
+            if dingus.colliderect(level1_rect):
+                win.blit(start, start_rect1)
+            if dingus.colliderect(level2_rect):
+                win.blit(start, start_rect2)
             fps_counter()
             pygame.display.update()
             clock.tick(60)
@@ -294,7 +334,11 @@ while run:
                     if allEnemyLists[level_selected][i].type != 2:
                         if player1.player_rect.colliderect(allEnemyLists[level_selected][i].rect):
                             player1.player_rect.y -= vel
+                            
             win.fill((0,0,0))
+            win.blit(sky, (0, 0)) # elle est mal place 
+            win.blit(ground, (0, 0))
+            win.blit(hp_bar, (0, -100)) # elle est mal placé / systeme d'hp pas implanté /pas de degat 
             for i in range(len(allEnemyLists[level_selected])):
                 if allEnemyLists[level_selected][i].type != 2:
                     if player1.player_rect.colliderect(allEnemyLists[level_selected][i].rect):
@@ -305,8 +349,9 @@ while run:
             if player1.type == 1 and keys[pygame.K_SPACE] and player1.cooldown == False:
                 win.blit(player1.windwall_surf,player1.windwall_rect)
             boss_group.draw(win)
+
             fps_counter()
             pygame.display.update()
-            clock.tick(60   )
+            clock.tick(60)
     
 pygame.quit()
