@@ -29,10 +29,12 @@ ground = pygame.image.load("img/ground_1.png").convert_alpha()
 ground = pygame.transform.scale(ground, (1920 , 1080))
 hp_bar = pygame.image.load("img/ProgressBar.png").convert_alpha()
 hp_bar = pygame.transform.scale(hp_bar, (850 , 500))
-model_enemy1 = pygame.image.load("img/goomba.png").convert()
-model_enemy2 = pygame.image.load("img/hunter.png").convert()
-model_enemy3 = pygame.image.load("img/volant.png").convert()
-model_bullet0= pygame.image.load("img/goomba.png").convert()
+model_enemy1 = pygame.image.load("img/goomba.png").convert_alpha()
+model_enemy2 = pygame.image.load("img/hunter.png").convert_alpha()
+model_enemy2 = pygame.transform.scale(model_enemy2,(650 , 400))
+model_enemy3 = pygame.image.load("img/plane.png").convert_alpha()
+model_enemy3 = pygame.transform.scale(model_enemy3,(400 , 400))
+model_bullet0= pygame.image.load("img/Bullet.png").convert_alpha()
 model_bullet = pygame.transform.scale_by(model_bullet0,1/4)
 
 
@@ -359,8 +361,13 @@ while run:
             win.fill((0,0,0))
             
             x_background -= 1
-            win.blit(sky, (x_background, 0)) # elle est mal place 
-            win.blit(sky, (x_background , 0 ))
+            if x_background < 1920 :
+                win.blit(sky, (x_background, 0)) # elle est mal place 
+                win.blit(sky, (x_background+1920 , 0 ))
+            else:
+                x_background = 0
+                win.blit(sky, (x_background, 0))
+                
             win.blit(ground, (0, 0))
             win.blit(hp_bar, (0, -100)) # elle est mal placé / systeme d'hp pas implanté /pas de degat 
             for i in range(len(allEnemyLists[level_selected])):
