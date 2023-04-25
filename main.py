@@ -35,6 +35,10 @@ model_enemy3 = pygame.image.load("img/volant.png").convert()
 model_bullet0= pygame.image.load("img/goomba.png").convert()
 model_bullet = pygame.transform.scale_by(model_bullet0,1/4)
 
+
+x_background = 0
+
+
 def fps_counter():
     fps = str(int(clock.get_fps()))
     fps_t = my_font.render(fps , 1, pygame.Color("RED"))
@@ -183,7 +187,7 @@ class Player(pygame.sprite.Sprite):
         self.Alive = True
         self.cooldown = False
         if self.type == 1: #Eagle
-            self.player_surf0 = pygame.image.load("img/pitie.png").convert()
+            self.player_surf0 = pygame.image.load("img/Bird.gif").convert()
             self.player_surf = pygame.transform.scale_by(self.player_surf0,1/3)
             self.player_rect = self.player_surf.get_rect(topleft = (x,y))
             self.height = self.player_surf.get_height()
@@ -336,7 +340,10 @@ while run:
                             player1.player_rect.y -= vel
                             
             win.fill((0,0,0))
-            win.blit(sky, (0, 0)) # elle est mal place 
+            
+            x_background -= 1
+            win.blit(sky, (x_background, 0)) # elle est mal place 
+            win.blit(sky, (x_background , 0 ))
             win.blit(ground, (0, 0))
             win.blit(hp_bar, (0, -100)) # elle est mal placé / systeme d'hp pas implanté /pas de degat 
             for i in range(len(allEnemyLists[level_selected])):
