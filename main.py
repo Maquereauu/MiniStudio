@@ -305,8 +305,8 @@ class Player(pygame.sprite.Sprite):
                     self.cooldown = False
 
 map = img.get_rect(topleft = (0,0))
-start_rect1 = start.get_rect(topleft = (1675 , 375))
-start_rect2 = start.get_rect(topleft = (1425 , 125))
+start_rect1 = start.get_rect(topleft = (275 , 675))
+start_rect2 = start.get_rect(topleft = (275 , 175))
 menu = True
 ticks = 0
 level_selected = 1
@@ -507,5 +507,7 @@ while run:
                     if resume.collidepoint(pygame.mouse.get_pos()) and event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                         pauseScreen = False
                 pygame.display.update()
+            if player1.Alive == False:
+                menu = True
             
 pygame.quit()
