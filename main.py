@@ -15,6 +15,7 @@ c2 = 0
 width = 50
 height = 50
 vel = 750
+nb_dash = 0
 clock = pygame.time.Clock()
 pos = pygame.mouse.get_pos()
 img = pygame.image.load("img/map.png").convert_alpha()
@@ -45,6 +46,11 @@ def fps_counter():
     fps = str(int(clock.get_fps()))
     fps_t = my_font.render(fps , 1, pygame.Color("RED"))
     win.blit(fps_t,(0,0))
+    
+def dash_counter():
+    dash = str(nb_dash)
+    dash_t = my_font.render("dash : " + dash , 1, pygame.Color("RED"))
+    win.blit(dash_t,(100,0))
 
 class Boss(pygame.sprite.Sprite):
     def __init__(self,type,x,y):
@@ -388,5 +394,7 @@ while run:
             boss_group.draw(win)
 
             fps_counter()
+            if level_selected == 1:
+                dash_counter()
             pygame.display.update()
 pygame.quit()
