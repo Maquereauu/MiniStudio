@@ -15,6 +15,7 @@ c2 = 0
 width = 50
 height = 50
 vel = 750
+nb_dash = 0
 clock = pygame.time.Clock()
 pos = pygame.mouse.get_pos()
 img = pygame.image.load("img/map.png").convert_alpha()
