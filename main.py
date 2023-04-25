@@ -13,9 +13,10 @@ c2 = 0
 width = 50
 height = 50
 vel = 750
+nb_dash = 0
 clock = pygame.time.Clock()
 pos = pygame.mouse.get_pos()
-img = pygame.image.load("img/menu.png").convert_alpha()
+img = pygame.image.load("img/map.png").convert_alpha()
 img = pygame.transform.scale(img , (1920 , 1080))
 bruh =pygame.image.load("img/dingus.jpg").convert_alpha()
 bruh = pygame.transform.scale(bruh , (50 , 50))
@@ -27,11 +28,17 @@ ground = pygame.image.load("img/ground_1.png").convert_alpha()
 ground = pygame.transform.scale(ground, (1920 * 3 , 1080))
 hp_bar = pygame.image.load("img/ProgressBar.png").convert_alpha()
 hp_bar = pygame.transform.scale(hp_bar, (850 , 500))
-model_enemy1 = pygame.image.load("img/goomba.png").convert()
-model_enemy2 = pygame.image.load("img/hunter.png").convert()
-model_enemy3 = pygame.image.load("img/volant.png").convert()
-model_bullet0= pygame.image.load("img/goomba.png").convert()
+model_enemy1 = pygame.image.load("img/goomba.png").convert_alpha()
+model_enemy2 = pygame.image.load("img/hunter.png").convert_alpha()
+model_enemy2 = pygame.transform.scale(model_enemy2,(650 , 400))
+model_enemy3 = pygame.image.load("img/plane.png").convert_alpha()
+model_enemy3 = pygame.transform.scale(model_enemy3,(400 , 400))
+model_bullet0= pygame.image.load("img/Bullet.png").convert_alpha()
 model_bullet = pygame.transform.scale_by(model_bullet0,1/4)
+
+
+x_background = 0
+
 model_coin0 = pygame.image.load("img/coin.png").convert()
 model_coin = pygame.transform.scale_by(model_coin0,1/4)
 
@@ -256,7 +263,7 @@ class Player(pygame.sprite.Sprite):
         if self.type == 1: #Eagle
             self.max_hp = 100
             self.hp = self.max_hp
-            self.player_surf0 = pygame.image.load("img/pitie.png").convert()
+            self.player_surf0 = pygame.image.load("img/Bird.gif").convert()
             self.player_surf = pygame.transform.scale_by(self.player_surf0,1/3)
             self.player_rect = self.player_surf.get_rect(topleft = (x,y))
             self.height = self.player_surf.get_height()
@@ -303,8 +310,8 @@ start_rect2 = start.get_rect(topleft = (1425 , 125))
 menu = True
 ticks = 0
 level_selected = 1
-level1_rect  = pygame.draw.rect(win,color=(156,0,36), rect=(1750,450,50,50))
-level2_rect  = pygame.draw.rect(win,color=(156,0,36), rect=(1500,200,50,50))
+level1_rect  = pygame.draw.rect(win,color=(156,0,36), rect=(350,750,50,50))
+level2_rect  = pygame.draw.rect(win,color=(156,0,36), rect=(350,250,50,50))
 timer_windwall = 0
 timer_dash = 0
 pauseScreen = False
@@ -387,8 +394,8 @@ while run:
                 menu = False
             win.blit(img, map)
             win.blit(bruh, dingus)
-            level1_rect  = pygame.draw.rect(win,color=(156,0,36), rect=(1750,450,50,50))
-            level2_rect  = pygame.draw.rect(win,color=(156,0,36), rect=(1500,200,50,50))
+            level1_rect  = pygame.draw.rect(win,color=(156,0,36), rect=(350,750,50,50))
+            level2_rect  = pygame.draw.rect(win,color=(156,0,36), rect=(350,250,50,50))
             if dingus.colliderect(level1_rect):
                 win.blit(start, start_rect1)
             if dingus.colliderect(level2_rect):
