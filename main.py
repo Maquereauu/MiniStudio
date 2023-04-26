@@ -8,6 +8,7 @@ my_font = pygame.font.SysFont('Comic Sans MS', 30)
 text_surface = my_font.render('Heheheha', False, (255, 0, 0))
 run = True
 lose = False
+fin = False
 c1 = 0 
 c2 = 0
 width = 50
@@ -22,8 +23,12 @@ bruh =pygame.image.load("img/ship.png").convert_alpha()
 bruh = pygame.transform.scale(bruh , (50 , 75))
 bruh_0 = pygame.transform.rotate(bruh , 0)
 bruh_1 = pygame.transform.rotate(bruh , 90)
+bruh_15 = pygame.transform.rotate(bruh , 45)
+bruh_25 = pygame.transform.rotate(bruh , 135)
 bruh_2 = pygame.transform.rotate(bruh , 180)
+bruh_35 = pygame.transform.rotate(bruh , 225)
 bruh_3 = pygame.transform.rotate(bruh , 270)
+bruh_4 = pygame.transform.rotate(bruh , 315)
 play = pygame.image.load("img/play.png").convert_alpha()
 play = pygame.transform.scale(play, (75,60))
 play_rect1 = play.get_rect(topleft = (598,740))
@@ -65,6 +70,11 @@ took_damage.set_alpha(128)
 took_damage.fill((255,0,0))
 dialog_box = pygame.image.load("img/dialog_box.png").convert_alpha()
 dialog_box = pygame.transform.scale(dialog_box, (1000 , 325))
+dialog = pygame.transform.scale(dialog_box , (750 , 320))
+valider = pygame.image.load("img/valider.png").convert_alpha()
+valider = pygame.transform.scale(valider ,(100,100))
+refuser = pygame.image.load("img/refuser.png").convert_alpha()
+refuser = pygame.transform.scale(refuser , (100,100))
 robot_model1 = pygame.image.load("img/little_robot.png").convert_alpha()
 robot_model1 = pygame.transform.scale(robot_model1, (900 , 600))
 robot_model2 = pygame.image.load("img/little_robot_happy.png").convert_alpha()
@@ -450,6 +460,26 @@ while run:
                 y += vel * delta_time
                 ship = bruh_2.get_rect(topleft = (x,y))
                 bruh = bruh_2
+            if keys[pygame.K_LEFT] and x > 5 and keys[pygame.K_UP] and y > 5 and x > 5:
+               x-=vel * delta_time
+               y -= vel * delta_time
+               bruh=bruh_15
+               ship = bruh_15.get_rect(topleft = (x,y))
+            if keys[pygame.K_RIGHT] and x > 5 and keys[pygame.K_UP] and y > 5 and x < 1915:
+               x+=vel * delta_time
+               y -= vel * delta_time
+               bruh=bruh_4
+               ship = bruh_4.get_rect(topleft = (x,y))
+            if keys[pygame.K_RIGHT] and x > 5 and keys[pygame.K_DOWN] and y < 1075 and x < 1915:
+               x+=vel * delta_time
+               y += vel * delta_time
+               bruh=bruh_35
+               ship = bruh_35.get_rect(topleft = (x,y))
+            if keys[pygame.K_LEFT] and x > 5 and keys[pygame.K_DOWN] and y < 1075 and x > 5:
+               x-=vel * delta_time
+               y += vel * delta_time
+               bruh=bruh_25
+               ship = bruh_25.get_rect(topleft = (x,y))
             if keys[pygame.K_ESCAPE]:
                 run = False
                 break
@@ -471,8 +501,54 @@ while run:
             level2_rect  = win.blit(play, play_rect2)
             if ship.colliderect(level1_rect):
                 win.blit(start, start_rect1)
+                win.blit(dialog , (735,605))
+                win.blit(robot_model1 , (955, 325))
+                win.blit(valider , (1075 , 800))
+                if valider.get_rect(topleft = (1075,800)).collidepoint(pygame.mouse.get_pos()) and event.type == pygame.MOUSEBUTTONDOWN and event.button == 1 :
+                    menu = False
+                    level_selected = 0
+                    win.fill((255,255,255))
+                    pygame.display.flip()
+                    pygame.time.delay(100)
+                    win.fill((0,0,0))
+                    pygame.display.flip()
+                    pygame.time.delay(100)
+                    win.fill((255,255,255))
+                    pygame.display.flip()
+                    pygame.time.delay(100)
+                    win.fill((0,0,0))
+                    pygame.display.flip()
+                    pygame.time.delay(100)
+                    win.fill((255,255,255))
+                    pygame.display.flip()
+                    pygame.time.delay(100)
+                text_level1 = my_font.render("Souhaites tu lancer le premier niveau ?", 1, pygame.Color("BLACK"))
+                win.blit(text_level1 , (750 , 700))
             if ship.colliderect(level2_rect):
                 win.blit(start, start_rect2)
+                win.blit(dialog , (545,375))
+                win.blit(robot_model1 , (765, 65))
+                win.blit(valider , (885 , 575))
+                text_level1 = my_font.render("Souhaites tu lancer le second niveau ?", 1, pygame.Color("BLACK"))
+                win.blit(text_level1 , (560 , 470))
+                if valider.get_rect(topleft = (885,575)).collidepoint(pygame.mouse.get_pos()) and event.type == pygame.MOUSEBUTTONDOWN and event.button == 1 :
+                    menu = False
+                    level_selected = 1
+                    win.fill((255,255,255))
+                    pygame.display.flip()
+                    pygame.time.delay(100)
+                    win.fill((0,0,0))
+                    pygame.display.flip()
+                    pygame.time.delay(100)
+                    win.fill((255,255,255))
+                    pygame.display.flip()
+                    pygame.time.delay(100)
+                    win.fill((0,0,0))
+                    pygame.display.flip()
+                    pygame.time.delay(100)
+                    win.fill((255,255,255))
+                    pygame.display.flip()
+                    pygame.time.delay(100)
             pygame.display.update()
     player_group.add(playerList[level_selected])
     for j in range(len(allEnemyLists[level_selected])):
@@ -770,12 +846,14 @@ while run:
                     pygame.display.update()
             if player1.Alive == False:
                 menu = True
+            if bossList[level_selected].hp == 0:
+                fin = True
         while lose:
             time = pygame.time.get_ticks()
             delta_time = (time - ticks) / 1000
             ticks = time
             win.fill((0,0,0))
-            win.blit(player1.player_surf,(800,300))
+            win.blit(robot_model3,(600,-100))
             textlose1 = my_font.render("Tu es mort !", 1, pygame.Color("WHITE"))
             textlose2 = my_font.render("Tu peux rejouer ou retourner au menu.", 1, pygame.Color("WHITE"))
             textRetry = my_font.render("Rejouer", 1, pygame.Color("WHITE"))
@@ -798,5 +876,52 @@ while run:
                 player1.Alive = False
                 run = False
                 lose = False
+            pygame.display.update()
+        while fin :
+            win.fill((0,0,0))
+            win.blit(robot_model2,(300,100))
+            textFin = my_font.render("Tu as gagné ! les oiseaux n'ont plus de secrets pour toi !", 1, pygame.Color("WHITE"))
+            textFin_level0 = my_font.render("Les aigles ont une ésperance de vie d’environ 25 ans. Protege les !", 1, pygame.Color("WHITE"))
+            textFin_level1 = my_font.render("Les faucons ont la particularité de posséder une vue perçante et des griffes en forme de faux.", 1, pygame.Color("WHITE"))
+            textFin2 = my_font.render("Clique ici pour retourner au menu.", 1, pygame.Color("WHITE"))
+            textMenu = my_font.render("Menu", 1, pygame.Color("WHITE"))
+            textListFin = [textFin_level0, textFin_level1]
+            win.blit(textFin,(500,500))
+            win.blit(textListFin[level_selected],(500,550))
+            lobby = pygame.draw.rect(win,color=(156,0,36), rect=(1250,800,250,50))
+            win.blit(textFin2,(500,650))
+            win.blit(textMenu,(1330,800))
+            for event in pygame.event.get():
+                if lobby.collidepoint(pygame.mouse.get_pos()) and event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                    fin = False
+                    menu = True          
+            keys = pygame.key.get_pressed()
+            if keys[pygame.K_ESCAPE]:
+                player1.Alive = False
+                run = False
+                lose = False
+            pygame.display.update()
+        while fin :
+            win.fill((0,0,0))
+            win.blit(robot_model2,(300,100))
+            textFin = my_font.render("Tu as gagné ! les oiseaux n'ont plus de secrets pour toi !", 1, pygame.Color("WHITE"))
+            textFin_level0 = my_font.render("Les aigles ont une ésperance de vie d’environ 25 ans. Protege les !", 1, pygame.Color("WHITE"))
+            textFin_level1 = my_font.render("Les faucons ont la particularité de posséder une vue perçante et des griffes en forme de faux.", 1, pygame.Color("WHITE"))
+            textFin2 = my_font.render("Clique ici pour retourner au menu.", 1, pygame.Color("WHITE"))
+            textMenu = my_font.render("Menu", 1, pygame.Color("WHITE"))
+            textListFin = [textFin_level0, textFin_level1]
+            win.blit(textFin,(500,500))
+            win.blit(textListFin[level_selected],(500,550))
+            lobby = pygame.draw.rect(win,color=(156,0,36), rect=(1250,800,250,50))
+            win.blit(textFin2,(500,650))
+            win.blit(textMenu,(1330,800))
+            for event in pygame.event.get():
+                if lobby.collidepoint(pygame.mouse.get_pos()) and event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                    fin = False
+                    menu = True          
+            keys = pygame.key.get_pressed()
+            if keys[pygame.K_ESCAPE]:
+                player1.Alive = False
+                run = False
             pygame.display.update()
 pygame.quit()
