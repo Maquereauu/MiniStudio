@@ -46,6 +46,8 @@ model_fireball = pygame.transform.rotate(model_fireball, 45)
 icon_windwall = pygame.image.load("img/WindWall.png").convert_alpha()
 icon_windwall = pygame.transform.scale(icon_windwall, (50 , 50))
 icon_windwall.set_alpha(150)
+piece = pygame.image.load("img/coin.png").convert_alpha()
+piece = pygame.transform.scale_by(piece,(50,50))
 red_cross = pygame.image.load("img/Red_Cross.png").convert_alpha()
 red_cross = pygame.transform.scale(red_cross, (60 , 60))
 x_background = 0
@@ -57,11 +59,8 @@ def fps_counter():
     fps = str(int(clock.get_fps()))
     fps_t = my_font.render(fps , 1, pygame.Color("RED"))
     win.blit(fps_t,(0,0))
-
-def dash_counter():
-    dash = str(nb_dash)
-    dash_t = my_font.render("dash : " + dash , 1, pygame.Color("RED"))
-    win.blit(dash_t,(100,0))
+    
+     
 
 class Boss(pygame.sprite.Sprite):
     def __init__(self,type,x,y):
@@ -557,14 +556,17 @@ while run:
                 win.blit(hp_bar, (-30, -60))
                 if level_selected == 0:
                     win.blit(icon_windwall, (75, 125))
-                if player1.type == 1 and keys[pygame.K_SPACE] and player1.cooldown == False:
-                    timer_windwall = pygame.time.get_ticks()
-                if pygame.time.get_ticks() - player1.timer < 2000:
-                    win.blit(red_cross, (70, 120))
+                    if player1.type == 1 and keys[pygame.K_SPACE] and player1.cooldown == False:
+                        timer_windwall = pygame.time.get_ticks()
+                    if pygame.time.get_ticks() - player1.timer < 2000:
+                        win.blit(red_cross, (70, 120))
                 boss_group.draw(win)
                 healthBar = pygame.draw.rect(win,color=(156,0,36), rect=(75,65,player1.hp*2.2,30))
                 if level_selected == 1:
-                    dash_counter()
+                    if nb_dash >= 1:
+                        win.blit(piece, (75,125))
+                        if nb_dash >= 2 :
+                            win.blit(piece, (130 , 125))
                 pygame.display.update()
                 if player1.hp <= 0:
                     menu = True
