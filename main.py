@@ -586,8 +586,6 @@ while run:
                 if bossList[level_selected].tookDamage:
                     win.blit(took_damage, (1300,0))
                 healthBar = pygame.draw.rect(win,color=(156,0,36), rect=(75,65,player1.hp*2.2,30))
-                if level_selected == 1:
-                    dash_counter()
                 if Tutorial:
                     win.blit(icon_windwall,(1870,0))
                     if icon_windwall.get_rect(topleft = (1870,0)).collidepoint(pygame.mouse.get_pos()) and event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
