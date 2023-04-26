@@ -22,8 +22,12 @@ bruh =pygame.image.load("img/ship.png").convert_alpha()
 bruh = pygame.transform.scale(bruh , (50 , 75))
 bruh_0 = pygame.transform.rotate(bruh , 0)
 bruh_1 = pygame.transform.rotate(bruh , 90)
+bruh_15 = pygame.transform.rotate(bruh , 45)
+bruh_25 = pygame.transform.rotate(bruh , 135)
 bruh_2 = pygame.transform.rotate(bruh , 180)
+bruh_35 = pygame.transform.rotate(bruh , 225)
 bruh_3 = pygame.transform.rotate(bruh , 270)
+bruh_4 = pygame.transform.rotate(bruh , 315)
 play = pygame.image.load("img/play.png").convert_alpha()
 play = pygame.transform.scale(play, (75,60))
 play_rect1 = play.get_rect(topleft = (598,740))
@@ -440,6 +444,26 @@ while run:
                 y += vel * delta_time
                 ship = bruh_2.get_rect(topleft = (x,y))
                 bruh = bruh_2
+            if keys[pygame.K_LEFT] and x > 5 and keys[pygame.K_UP] and y > 5 and x > 5:
+               x-=vel * delta_time
+               y -= vel * delta_time
+               bruh=bruh_15
+               ship = bruh_15.get_rect(topleft = (x,y))
+            if keys[pygame.K_RIGHT] and x > 5 and keys[pygame.K_UP] and y > 5 and x < 1915:
+               x+=vel * delta_time
+               y -= vel * delta_time
+               bruh=bruh_4
+               ship = bruh_4.get_rect(topleft = (x,y))
+            if keys[pygame.K_RIGHT] and x > 5 and keys[pygame.K_DOWN] and y < 1075 and x < 1915:
+               x+=vel * delta_time
+               y += vel * delta_time
+               bruh=bruh_35
+               ship = bruh_35.get_rect(topleft = (x,y))
+            if keys[pygame.K_LEFT] and x > 5 and keys[pygame.K_DOWN] and y < 1075 and x > 5:
+               x-=vel * delta_time
+               y += vel * delta_time
+               bruh=bruh_25
+               ship = bruh_25.get_rect(topleft = (x,y))
             if keys[pygame.K_ESCAPE]:
                 run = False
                 break
@@ -591,7 +615,7 @@ while run:
                 if level_selected == 1:
                     for i in range(len(coinList)):
                         if coinList[i].type == 1:
-                            if player1.player_rect.colliderect(coinList[i].rect) and coinList[i].isdead == False:
+                            if player1.player_rect.colliderect(coinList[i].rect) and coinList[i].isdead == False and nb_dash <= 4:
                                 nb_dash += 1
                                 coinList[i].isdead = True
                                 coinList[i].kill()
