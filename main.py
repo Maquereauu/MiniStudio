@@ -8,6 +8,7 @@ win=pygame.display.set_mode((1920,1080))
 my_font = pygame.font.SysFont('Comic Sans MS', 30)
 text_surface = my_font.render('Heheheha', False, (255, 0, 0))
 run = True
+loose = False
 c1 = 0 
 c2 = 0
 width = 50
@@ -18,8 +19,16 @@ clock = pygame.time.Clock()
 pos = pygame.mouse.get_pos()
 img = pygame.image.load("img/map.png").convert_alpha()
 img = pygame.transform.scale(img , (1920 , 1080))
-bruh =pygame.image.load("img/dingus.jpg").convert_alpha()
-bruh = pygame.transform.scale(bruh , (50 , 50))
+bruh =pygame.image.load("img/ship.png").convert_alpha()
+bruh = pygame.transform.scale(bruh , (50 , 75))
+bruh_0 = pygame.transform.rotate(bruh , 0)
+bruh_1 = pygame.transform.rotate(bruh , 90)
+bruh_2 = pygame.transform.rotate(bruh , 180)
+bruh_3 = pygame.transform.rotate(bruh , 270)
+play = pygame.image.load("img/play.png").convert_alpha()
+play = pygame.transform.scale(play, (75,60))
+play_rect1 = play.get_rect(topleft = (598,740))
+play_rect2 = play.get_rect(topleft = (418,510))
 start = pygame.image.load("img/start.png").convert_alpha()
 start = pygame.transform.scale(start , (200 , 200))
 background = pygame.image.load("img/back.png").convert_alpha()
@@ -56,16 +65,12 @@ x_background = 0
 speed = 1
 model_coin0 = pygame.image.load("img/coin.png").convert_alpha()
 model_coin = pygame.transform.scale_by(model_coin0,1/4)
+piece =  pygame.transform.scale(model_coin0, (50 , 50))
 
 def fps_counter():
     fps = str(int(clock.get_fps()))
     fps_t = my_font.render(fps , 1, pygame.Color("RED"))
     win.blit(fps_t,(0,0))
-
-def dash_counter():
-    dash = str(nb_dash)
-    dash_t = my_font.render("dash : " + dash , 1, pygame.Color("RED"))
-    win.blit(dash_t,(100,0))
 
 class Boss(pygame.sprite.Sprite):
     def __init__(self,type,x,y):
@@ -373,14 +378,13 @@ while run:
     enemy15 = Enemy(1,9000,700)
     enemy16 = Enemy(3,10500,0)
     enemy17 = Enemy(2,12000,700)
-
     coin1 = Coin(1,1500, 100)
     coin2 = Coin(1,2000, 50)
     coin3 = Coin(1,4000, 700)
     coin4 = Coin(1,5600, 50)
     coinList = [coin1, coin2, coin3, coin4]
     enemyList1 = [enemy1,enemy2,enemy3,enemy4,enemy5,enemy6,enemy7,enemy8]
-    enemyList2 = [enemy9,enemy10,enemy11,enemy12,enemy13,enemy14,enemy15,enemy16,enemy17,]
+    enemyList2 = [enemy9,enemy10,enemy11,enemy12,enemy13,enemy14,enemy15,enemy16,enemy17]
     allEnemyLists = [enemyList1,enemyList2]
     boss1 = Boss(1,15000,0)
     boss2 = Boss(2,15000,0)
@@ -390,6 +394,7 @@ while run:
     bullet_group = pygame.sprite.Group()
     boss_group = pygame.sprite.Group()
     coin_group = pygame.sprite.Group()
+    ship = bruh.get_rect(topleft = (x,y))
     Tutorial = True
     for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -404,38 +409,45 @@ while run:
             delta_time = (time - ticks) / 1000
             ticks = time
             point = pygame.mouse.get_pos()
-            dingus = bruh.get_rect(topleft = (x,y))
+            keys = pygame.key.get_pressed()
+            if keys[pygame.K_LEFT] and x > 5:
+               x-=vel * delta_time
+               bruh=bruh_1
+               ship = bruh_1.get_rect(topleft = (x,y))
+            if keys[pygame.K_RIGHT] and x < 1915:
+               x+=vel * delta_time
+               bruh = bruh_3
+               ship = bruh_3.get_rect(topleft = (x,y))
+            if keys[pygame.K_UP] and y > 5:
+               y -= vel * delta_time
+               bruh = bruh_0
+               ship = bruh.get_rect(topleft = (x,y))
+            if keys[pygame.K_DOWN] and y < 1075:
+                y += vel * delta_time
+                ship = bruh_2.get_rect(topleft = (x,y))
+                bruh = bruh_2
+            if keys[pygame.K_ESCAPE]:
+                run = False
+                break
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     run = False
                     break
-                if dingus.colliderect(level1_rect):
+                if ship.colliderect(level1_rect):
                     if keys[pygame.K_SPACE]:
                        menu = False
                        level_selected = 0
-                if dingus.colliderect(level2_rect):
+                if ship.colliderect(level2_rect):
                     if keys[pygame.K_SPACE]:
                         menu = False
                         level_selected = 1
-            keys = pygame.key.get_pressed()
-            if keys[pygame.K_LEFT] and x > 5:
-                        x-=vel * delta_time
-            if keys[pygame.K_RIGHT] and x < 1915:
-                        x+=vel * delta_time
-            if keys[pygame.K_UP] and y > 5:
-                        y -= vel * delta_time
-            if keys[pygame.K_DOWN] and y < 1075:
-                        y += vel * delta_time
-            if keys[pygame.K_ESCAPE]:
-                run = False
-                break
             win.blit(img, map)
-            win.blit(bruh, dingus)
-            level1_rect  = pygame.draw.rect(win,color=(156,0,36), rect=(610,745,50,50))
-            level2_rect  = pygame.draw.rect(win,color=(156,0,36), rect=(430,515,50,50))
-            if dingus.colliderect(level1_rect):
+            win.blit(bruh, ship)
+            level1_rect  = win.blit(play, play_rect1)
+            level2_rect  = win.blit(play, play_rect2)
+            if ship.colliderect(level1_rect):
                 win.blit(start, start_rect1)
-            if dingus.colliderect(level2_rect):
+            if ship.colliderect(level2_rect):
                 win.blit(start, start_rect2)
             pygame.display.update()
     player_group.add(playerList[level_selected])
@@ -583,7 +595,7 @@ while run:
                         speed = 1
                 pygame.display.update()
                 if player1.hp <= 0:
-                    menu = True
+                    loose = True
                     break
             else:
                 resume = pygame.draw.rect(win,color=(156,0,36), rect=(500,500,player1.hp*3,50))
@@ -609,4 +621,29 @@ while run:
                 pygame.display.update()
             if player1.Alive == False:
                 menu = True
+        while loose:
+            win.fill((0,0,0))
+            win.blit(player1.player_surf,(800,300))
+            textLoose1 = my_font.render("Tu es mort !", 1, pygame.Color("WHITE"))
+            textLoose2 = my_font.render("Tu peux rejouer ou retourner au menu.", 1, pygame.Color("WHITE"))
+            textRetry = my_font.render("Rejouer", 1, pygame.Color("WHITE"))
+            textMenu = my_font.render("Menu", 1, pygame.Color("WHITE"))
+            win.blit(textLoose1,(800,600))
+            win.blit(textLoose2,(650,650))
+            retry1 = pygame.draw.rect(win,color=(156,0,36), rect=(350,800,250,50))
+            lobby1 = pygame.draw.rect(win,color=(156,0,36), rect=(1250,800,250,50))
+            win.blit(textRetry,(420,800))
+            win.blit(textMenu,(1330,800))
+            for event in pygame.event.get():
+                if retry1.collidepoint(pygame.mouse.get_pos()) and event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                    loose = False
+                    menu = False
+                if lobby1.collidepoint(pygame.mouse.get_pos()) and event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                    loose = False
+                    menu = True          
+            keys = pygame.key.get_pressed()
+            if keys[pygame.K_ESCAPE]:
+                player1.Alive = False
+                run = False
+            pygame.display.update()
 pygame.quit()
