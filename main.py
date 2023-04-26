@@ -37,19 +37,20 @@ model_enemy4 = pygame.transform.scale(model_enemy4,(200 , 200))
 model_enemy4_1 = pygame.transform.rotate(model_enemy4, 270)
 model_enemy4_2 = pygame.transform.rotate(model_enemy4, 225)
 model_enemy5 = pygame.image.load("img/wind_turbine.png").convert_alpha()
+model_enemy6 = pygame.image.load("img/broken_wall.png").convert_alpha()
 model_bullet0= pygame.image.load("img/Bullet.png").convert_alpha()
 model_bullet = pygame.transform.scale_by(model_bullet0,1/4)
 model_fireball = pygame.image.load("img/fireball.png").convert_alpha()
 model_fireball = pygame.transform.scale_by(model_fireball,1/2)
 model_fireball = pygame.transform.rotate(model_fireball, 45)
-icon_windwall = pygame.image.load("img/Yasuo Windwall.jpg").convert_alpha()
+icon_windwall = pygame.image.load("img/WindWall.png").convert_alpha()
 icon_windwall = pygame.transform.scale(icon_windwall, (50 , 50))
 icon_windwall.set_alpha(150)
 red_cross = pygame.image.load("img/Red_Cross.png").convert_alpha()
 red_cross = pygame.transform.scale(red_cross, (60 , 60))
 x_background = 0
 speed = 1
-model_coin0 = pygame.image.load("img/coin.png").convert()
+model_coin0 = pygame.image.load("img/coin.png").convert_alpha()
 model_coin = pygame.transform.scale_by(model_coin0,1/4)
 
 def fps_counter():
@@ -285,7 +286,7 @@ class Player(pygame.sprite.Sprite):
             self.player_surf = pygame.transform.scale_by(self.player_surf0,1/3)
             self.player_rect = self.player_surf.get_rect(topleft = (x,y))
             self.height = self.player_surf.get_height()
-            self.windwall_surf = pygame.image.load("img/Yasuo Windwall.jpg").convert()
+            self.windwall_surf = pygame.image.load("img/WindWall.png").convert_alpha()
             self.windwall_rect = self.windwall_surf.get_rect(topleft = (self.player_rect.x,self.player_rect.y))
         if self.type == 2:#Oiseau 2
             self.max_hp = 80
@@ -371,7 +372,7 @@ while run:
     coin4 = Coin(1,5600, 50)
     coinList = [coin1, coin2, coin3, coin4]
     enemyList1 = [enemy1,enemy2,enemy3,enemy4,enemy5,enemy6,enemy7,enemy8]
-    enemyList2 = []
+    enemyList2 = [enemy9,enemy10,enemy11,enemy12,enemy13,enemy14,enemy15,enemy16,enemy17,]
     allEnemyLists = [enemyList1,enemyList2]
     boss1 = Boss(1,15000,0)
     boss2 = Boss(2,15000,500)
@@ -398,7 +399,7 @@ while run:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     run = False
-                    menu = False
+                    break
                 if dingus.colliderect(level1_rect):
                     if keys[pygame.K_SPACE]:
                        menu = False
@@ -408,8 +409,6 @@ while run:
                         menu = False
                         level_selected = 1
             keys = pygame.key.get_pressed()
-            if keys[pygame.K_ESCAPE]:
-                run = False
             if keys[pygame.K_LEFT] and x > 5:
                         x-=vel * delta_time
             if keys[pygame.K_RIGHT] and x < 1915:
@@ -420,7 +419,7 @@ while run:
                         y += vel * delta_time
             if keys[pygame.K_ESCAPE]:
                 run = False
-                menu = False
+                break
             win.blit(img, map)
             win.blit(bruh, dingus)
             level1_rect = pygame.draw.rect(win,color=(156,0,36), rect=(350,750,50,50))
@@ -476,7 +475,6 @@ while run:
                     win.blit(text3,(400,850))
                 pygame.display.update()
         while player1.Alive:
-            print(allEnemyLists[level_selected][0].x)
             if allEnemyLists[level_selected][0].x <= 0:
                 Tutorial = False
                 speed = 1
@@ -542,7 +540,7 @@ while run:
                             player1.cooldown = True
                             player1.timer = pygame.time.get_ticks()
                             nb_dash -= 1
-                        coin_group.draw(win)
+                    coin_group.draw(win)
                 enemy_group.draw(win)
                 win.blit(player1.player_surf,player1.player_rect)
                 bullet_group.draw(win)
@@ -557,7 +555,8 @@ while run:
                     else:
                         timer_windwall = 0
                 win.blit(hp_bar, (-30, -60))
-                win.blit(icon_windwall, (75, 125))
+                if level_selected == 0:
+                    win.blit(icon_windwall, (75, 125))
                 if player1.type == 1 and keys[pygame.K_SPACE] and player1.cooldown == False:
                     timer_windwall = pygame.time.get_ticks()
                 if pygame.time.get_ticks() - player1.timer < 2000:
