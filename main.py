@@ -19,8 +19,16 @@ clock = pygame.time.Clock()
 pos = pygame.mouse.get_pos()
 img = pygame.image.load("img/map.png").convert_alpha()
 img = pygame.transform.scale(img , (1920 , 1080))
-bruh =pygame.image.load("img/dingus.jpg").convert_alpha()
-bruh = pygame.transform.scale(bruh , (50 , 50))
+bruh =pygame.image.load("img/ship.png").convert_alpha()
+bruh = pygame.transform.scale(bruh , (50 , 75))
+bruh_0 = pygame.transform.rotate(bruh , 0)
+bruh_1 = pygame.transform.rotate(bruh , 90)
+bruh_2 = pygame.transform.rotate(bruh , 180)
+bruh_3 = pygame.transform.rotate(bruh , 270)
+play = pygame.image.load("img/play.png").convert_alpha()
+play = pygame.transform.scale(play, (75,60))
+play_rect1 = play.get_rect(topleft = (598,740))
+play_rect2 = play.get_rect(topleft = (418,510))
 start = pygame.image.load("img/start.png").convert_alpha()
 start = pygame.transform.scale(start , (200 , 200))
 background = pygame.image.load("img/back.png").convert_alpha()
@@ -53,16 +61,12 @@ x_background = 0
 speed = 1
 model_coin0 = pygame.image.load("img/coin.png").convert_alpha()
 model_coin = pygame.transform.scale_by(model_coin0,1/4)
+piece =  pygame.transform.scale(model_coin0, (50 , 50))
 
 def fps_counter():
     fps = str(int(clock.get_fps()))
     fps_t = my_font.render(fps , 1, pygame.Color("RED"))
     win.blit(fps_t,(0,0))
-
-def dash_counter():
-    dash = str(nb_dash)
-    dash_t = my_font.render("dash : " + dash , 1, pygame.Color("RED"))
-    win.blit(dash_t,(100,0))
 
 class Boss(pygame.sprite.Sprite):
     def __init__(self,type,x,y):
@@ -364,7 +368,6 @@ while run:
     enemy15 = Enemy(1,9000,700)
     enemy16 = Enemy(3,10500,0)
     enemy17 = Enemy(2,12000,700)
-
     coin1 = Coin(1,1500, 100)
     coin2 = Coin(1,2000, 50)
     coin3 = Coin(1,4000, 700)
@@ -381,6 +384,7 @@ while run:
     bullet_group = pygame.sprite.Group()
     boss_group = pygame.sprite.Group()
     coin_group = pygame.sprite.Group()
+    ship = bruh.get_rect(topleft = (x,y))
     for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
@@ -394,38 +398,45 @@ while run:
             delta_time = (time - ticks) / 1000
             ticks = time
             point = pygame.mouse.get_pos()
-            dingus = bruh.get_rect(topleft = (x,y))
+            keys = pygame.key.get_pressed()
+            if keys[pygame.K_LEFT] and x > 5:
+               x-=vel * delta_time
+               bruh=bruh_1
+               ship = bruh_1.get_rect(topleft = (x,y))
+            if keys[pygame.K_RIGHT] and x < 1915:
+               x+=vel * delta_time
+               bruh = bruh_3
+               ship = bruh_3.get_rect(topleft = (x,y))
+            if keys[pygame.K_UP] and y > 5:
+               y -= vel * delta_time
+               bruh = bruh_0
+               ship = bruh.get_rect(topleft = (x,y))
+            if keys[pygame.K_DOWN] and y < 1075:
+                y += vel * delta_time
+                ship = bruh_2.get_rect(topleft = (x,y))
+                bruh = bruh_2
+            if keys[pygame.K_ESCAPE]:
+                run = False
+                break
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     run = False
                     break
-                if dingus.colliderect(level1_rect):
+                if ship.colliderect(level1_rect):
                     if keys[pygame.K_SPACE]:
                        menu = False
                        level_selected = 0
-                if dingus.colliderect(level2_rect):
+                if ship.colliderect(level2_rect):
                     if keys[pygame.K_SPACE]:
                         menu = False
                         level_selected = 1
-            keys = pygame.key.get_pressed()
-            if keys[pygame.K_LEFT] and x > 5:
-                        x-=vel * delta_time
-            if keys[pygame.K_RIGHT] and x < 1915:
-                        x+=vel * delta_time
-            if keys[pygame.K_UP] and y > 5:
-                        y -= vel * delta_time
-            if keys[pygame.K_DOWN] and y < 1075:
-                        y += vel * delta_time
-            if keys[pygame.K_ESCAPE]:
-                run = False
-                break
             win.blit(img, map)
-            win.blit(bruh, dingus)
-            level1_rect  = pygame.draw.rect(win,color=(156,0,36), rect=(610,745,50,50))
-            level2_rect  = pygame.draw.rect(win,color=(156,0,36), rect=(430,515,50,50))
-            if dingus.colliderect(level1_rect):
+            win.blit(bruh, ship)
+            level1_rect  = win.blit(play, play_rect1)
+            level2_rect  = win.blit(play, play_rect2)
+            if ship.colliderect(level1_rect):
                 win.blit(start, start_rect1)
-            if dingus.colliderect(level2_rect):
+            if ship.colliderect(level2_rect):
                 win.blit(start, start_rect2)
             pygame.display.update()
     player_group.add(playerList[level_selected])
