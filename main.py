@@ -662,7 +662,7 @@ while run:
                 if level_selected == 1:
                     for i in range(len(coinList)):
                         if coinList[i].type == 1:
-                            if player1.player_rect.colliderect(coinList[i].rect) and coinList[i].isdead == False and nb_dash <= 4:
+                            if player1.player_rect.colliderect(coinList[i].rect) and coinList[i].isdead == False and nb_dash < 4:
                                 nb_dash += 1
                                 coinList[i].isdead = True
                                 coinList[i].kill()
