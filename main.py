@@ -8,6 +8,7 @@ my_font = pygame.font.SysFont('Comic Sans MS', 30)
 text_surface = my_font.render('Heheheha', False, (255, 0, 0))
 run = True
 loose = False
+fin = False
 c1 = 0 
 c2 = 0
 width = 50
@@ -770,9 +771,11 @@ while run:
                     pygame.display.update()
             if player1.Alive == False:
                 menu = True
+            if bossList[level_selected].hp == 0:
+                fin = True
         while loose:
             win.fill((0,0,0))
-            win.blit(player1.player_surf,(800,300))
+            win.blit(robot_model3,(600,-100))
             textLoose1 = my_font.render("Tu es mort !", 1, pygame.Color("WHITE"))
             textLoose2 = my_font.render("Tu peux rejouer ou retourner au menu.", 1, pygame.Color("WHITE"))
             textRetry = my_font.render("Rejouer", 1, pygame.Color("WHITE"))
@@ -789,6 +792,29 @@ while run:
                     menu = False
                 if lobby1.collidepoint(pygame.mouse.get_pos()) and event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                     loose = False
+                    menu = True          
+            keys = pygame.key.get_pressed()
+            if keys[pygame.K_ESCAPE]:
+                player1.Alive = False
+                run = False
+            pygame.display.update()
+        while fin :
+            win.fill((0,0,0))
+            win.blit(robot_model2,(300,100))
+            textFin = my_font.render("Tu as gagné ! les oiseaux n'ont plus de secrets pour toi !", 1, pygame.Color("WHITE"))
+            textFin_level0 = my_font.render("Les aigles ont une ésperance de vie d’environ 25 ans. Protege les !", 1, pygame.Color("WHITE"))
+            textFin_level1 = my_font.render("Les faucons ont la particularité de posséder une vue perçante et des griffes en forme de faux.", 1, pygame.Color("WHITE"))
+            textFin2 = my_font.render("Clique ici pour retourner au menu.", 1, pygame.Color("WHITE"))
+            textMenu = my_font.render("Menu", 1, pygame.Color("WHITE"))
+            textListFin = [textFin_level0, textFin_level1]
+            win.blit(textFin,(500,500))
+            win.blit(textListFin[level_selected],(500,550))
+            lobby = pygame.draw.rect(win,color=(156,0,36), rect=(1250,800,250,50))
+            win.blit(textFin2,(500,650))
+            win.blit(textMenu,(1330,800))
+            for event in pygame.event.get():
+                if lobby.collidepoint(pygame.mouse.get_pos()) and event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                    fin = False
                     menu = True          
             keys = pygame.key.get_pressed()
             if keys[pygame.K_ESCAPE]:
