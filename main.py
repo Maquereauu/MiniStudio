@@ -823,9 +823,9 @@ while run:
                     textRetry = my_font.render("Rejouer", 1, pygame.Color("WHITE"))
                     textMenu = my_font.render("Menu", 1, pygame.Color("WHITE"))
                     textResume = my_font.render("Continuer", 1, pygame.Color("WHITE"))
-                    win.blit(textRetry,(550,500))
-                    win.blit(textMenu,(1050,500))
-                    win.blit(textResume,(1550,500))
+                    win.blit(textResume,(550,500))
+                    win.blit(textRetry,(1050,500))
+                    win.blit(textMenu,(1550,500))
                     for event in pygame.event.get():
                         if resume.collidepoint(pygame.mouse.get_pos()) and event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                             pauseScreen = False
