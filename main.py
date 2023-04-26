@@ -7,10 +7,8 @@ pygame.display.set_caption("masterclass")
 win=pygame.display.set_mode((1920,1080))
 my_font = pygame.font.SysFont('Comic Sans MS', 30)
 text_surface = my_font.render('Heheheha', False, (255, 0, 0))
-win=pygame.display.set_mode((1920,1080))
-my_font = pygame.font.SysFont('Comic Sans MS', 30)
-text_surface = my_font.render('Heheheha', False, (255, 0, 0))
 run = True
+loose = False
 c1 = 0 
 c2 = 0
 width = 50
@@ -69,7 +67,7 @@ def fps_counter():
     fps = str(int(clock.get_fps()))
     fps_t = my_font.render(fps , 1, pygame.Color("RED"))
     win.blit(fps_t,(0,0))
-    
+
 class Boss(pygame.sprite.Sprite):
     def __init__(self,type,x,y):
         super().__init__()
@@ -376,7 +374,7 @@ while run:
     coin4 = Coin(1,5600, 50)
     coinList = [coin1, coin2, coin3, coin4]
     enemyList1 = [enemy1,enemy2,enemy3,enemy4,enemy5,enemy6,enemy7,enemy8]
-    enemyList2 = [enemy9,enemy10,enemy11,enemy12,enemy13,enemy14,enemy15,enemy16,enemy17,]
+    enemyList2 = [enemy9,enemy10,enemy11,enemy12,enemy13,enemy14,enemy15,enemy16,enemy17]
     allEnemyLists = [enemyList1,enemyList2]
     boss1 = Boss(1,15000,0)
     boss2 = Boss(2,15000,500)
@@ -469,8 +467,8 @@ while run:
             if level_selected == 0:
                 win.fill((0,0,0))
                 win.blit(player1.player_surf,(800,300))
-                text1 = my_font.render("Grâce à ses ailes puissantes,Serge l'aigle peut créer des bourrasques de vent,", 1, pygame.Color("WHITE"))
-                text2 = my_font.render("permettant ainsi de contrer les balles des méchants chasseurs.", 1, pygame.Color("WHITE"))
+                text1 = my_font.render("Grâce à ses ailes puissantes,Monsieur oiseau peut créer des bourrasques de vent,", 1, pygame.Color("WHITE"))
+                text2 = my_font.render("permettant ainsi de contre les balles des méchants chasseurs.", 1, pygame.Color("WHITE"))
                 win.blit(text1,(400,600))
                 win.blit(text2,(400,650))
                 if pygame.time.get_ticks() - preGameTimer > 3000:
@@ -539,7 +537,7 @@ while run:
                 if level_selected == 1:
                     for i in range(len(coinList)):
                         if coinList[i].type == 1:
-                            if player1.player_rect.colliderect(coinList[i].rect) and coinList[i].isdead == False and nb_dash <= 4:
+                            if player1.player_rect.colliderect(coinList[i].rect) and coinList[i].isdead == False:
                                 nb_dash += 1
                                 coinList[i].isdead = True
                                 coinList[i].kill()
@@ -569,24 +567,17 @@ while run:
                 win.blit(hp_bar, (-30, -60))
                 if level_selected == 0:
                     win.blit(icon_windwall, (75, 125))
-                    if player1.type == 1 and keys[pygame.K_SPACE] and player1.cooldown == False:
-                        timer_windwall = pygame.time.get_ticks()
-                    if pygame.time.get_ticks() - player1.timer < 2000:
-                        win.blit(red_cross, (70, 120))
+                if player1.type == 1 and keys[pygame.K_SPACE] and player1.cooldown == False:
+                    timer_windwall = pygame.time.get_ticks()
+                if pygame.time.get_ticks() - player1.timer < 2000:
+                    win.blit(red_cross, (70, 120))
                 boss_group.draw(win)
                 healthBar = pygame.draw.rect(win,color=(156,0,36), rect=(75,65,player1.hp*2.2,30))
                 if level_selected == 1:
-                    if nb_dash >= 1:
-                        win.blit(piece, (75,125))
-                        if nb_dash >= 2 :
-                            win.blit(piece, (130 , 125))
-                            if nb_dash >= 3 :
-                                win.blit(piece, (185 , 125))
-                                if nb_dash == 4 :
-                                    win.blit(piece, (240 , 125))
+                    dash_counter()
                 pygame.display.update()
                 if player1.hp <= 0:
-                    menu = True
+                    loose = True
                     break
             else:
                 resume = pygame.draw.rect(win,color=(156,0,36), rect=(500,500,player1.hp*3,50))
@@ -612,5 +603,29 @@ while run:
                 pygame.display.update()
             if player1.Alive == False:
                 menu = True
+        while loose:
+            win.fill((0,0,0))
+            win.blit(player1.player_surf,(800,300))
+            textLoose1 = my_font.render("Tu es mort !", 1, pygame.Color("WHITE"))
+            textLoose2 = my_font.render("Tu peux rejouer ou retourner au menu.", 1, pygame.Color("WHITE"))
+            textRetry = my_font.render("Rejouer", 1, pygame.Color("WHITE"))
+            textMenu = my_font.render("Menu", 1, pygame.Color("WHITE"))
+            win.blit(textLoose1,(800,600))
+            win.blit(textLoose2,(650,650))
+            retry1 = pygame.draw.rect(win,color=(156,0,36), rect=(350,800,250,50))
+            lobby1 = pygame.draw.rect(win,color=(156,0,36), rect=(1250,800,250,50))
+            win.blit(textRetry,(420,800))
+            win.blit(textMenu,(1330,800))
+            for event in pygame.event.get():
+                if retry1.collidepoint(pygame.mouse.get_pos()) and event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                    loose = False
+                    menu = False
+                if lobby1.collidepoint(pygame.mouse.get_pos()) and event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                    loose = False
+                    menu = True          
+            keys = pygame.key.get_pressed()
+            if keys[pygame.K_ESCAPE]:
+                player1.Alive = False
+                run = False
+            pygame.display.update()
 pygame.quit()
-
