@@ -567,10 +567,10 @@ while run:
                 win.blit(hp_bar, (-30, -60))
                 if level_selected == 0:
                     win.blit(icon_windwall, (75, 125))
-                if player1.type == 1 and keys[pygame.K_SPACE] and player1.cooldown == False:
-                    timer_windwall = pygame.time.get_ticks()
-                if pygame.time.get_ticks() - player1.timer < 2000:
-                    win.blit(red_cross, (70, 120))
+                    if player1.type == 1 and keys[pygame.K_SPACE] and player1.cooldown == False:
+                        timer_windwall = pygame.time.get_ticks()
+                    if pygame.time.get_ticks() - player1.timer < 2000:
+                        win.blit(red_cross, (70, 120))
                 boss_group.draw(win)
                 healthBar = pygame.draw.rect(win,color=(156,0,36), rect=(75,65,player1.hp*2.2,30))
                 if level_selected == 1:
