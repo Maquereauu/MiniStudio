@@ -1,7 +1,7 @@
 from typing import KeysView
 import pygame
 import sys
-
+import math
 pygame.init()
 pygame.display.set_caption("masterclass")
 win=pygame.display.set_mode((1920,1080))
@@ -52,9 +52,13 @@ model_bullet = pygame.transform.scale_by(model_bullet0,1/4)
 model_fireball = pygame.image.load("img/fireball.png").convert_alpha()
 model_fireball = pygame.transform.scale_by(model_fireball,1/2)
 model_fireball = pygame.transform.rotate(model_fireball, 45)
+model_fireball2 = pygame.transform.rotate(model_fireball, 180)
 icon_windwall = pygame.image.load("img/WindWall.png").convert_alpha()
 icon_windwall = pygame.transform.scale(icon_windwall, (50 , 50))
 icon_windwall.set_alpha(150)
+took_damage = pygame.Surface((1000,1080))
+took_damage.set_alpha(128)
+took_damage.fill((255,0,0))
 red_cross = pygame.image.load("img/Red_Cross.png").convert_alpha()
 red_cross = pygame.transform.scale(red_cross, (60 , 60))
 x_background = 0
@@ -78,6 +82,7 @@ class Boss(pygame.sprite.Sprite):
         self.canShoot=True
         self.dead = False
         self.coinTimer = 0
+        self.tookDamage = False
         if self.type == 1:
             self.test = True
             self.image0 = pygame.image.load("img/tree.png").convert_alpha()
@@ -85,12 +90,14 @@ class Boss(pygame.sprite.Sprite):
             self.rect = self.image.get_rect(topleft = (x,y))
         if self.type == 2:
             self.test = True
-            self.image = pygame.image.load("img/boss.png").convert()
+            self.image0 = pygame.image.load("img/boss.png").convert()
+            self.image = pygame.transform.scale(self.image0 , (1000 , 1080))
             self.rect = self.image.get_rect(topleft = (x,y))
             self.canDropCoin = True
     def update(self):
         if self.hp == 0:
             if self.dead != True:
+                self.tookDamage = True
                 self.death = pygame.time.get_ticks()
             self.dead = True
             if pygame.time.get_ticks() - self.death >3000:
@@ -111,7 +118,7 @@ class Boss(pygame.sprite.Sprite):
                 bullet_group.add(bullet)
                 self.canShoot = False
         if self.type == 2:
-            if self.rect.x <= 1920-self.rect.width and self.canShoot:
+            if self.rect.x <= 1920-self.rect.width*0.75 and self.canShoot:
                 wall = Enemy(6,self.rect.x,self.y)
                 enemyList2.append(wall)
                 enemy_group.add(wall)
@@ -188,6 +195,8 @@ class Enemy(pygame.sprite.Sprite):
                 self.canShoot = False
         if self.type == 4:
             if self.rect.x < 1920-self.rect.width:
+                self.y += math.sin(pygame.time.get_ticks() * 0.5 * math.pi / (40 * 2))
+                self.rect.y = self.y
                 if self.fly:
                     self.timer = pygame.time.get_ticks()
                     self.fly = False
@@ -266,8 +275,9 @@ class Bullet(pygame.sprite.Sprite):
                 boss1.hp -=1
                 self.type = 5
         if self.type == 5:
-            self.x += 2000 * delta_time  * speed
+            self.x += 1000 * delta_time  * speed
             self.rect.x = self.x
+            self.image = model_fireball2
             if self.rect.colliderect(boss1.rect):
                 self.kill()
         if player1.player_rect.colliderect(self.rect):
@@ -377,7 +387,7 @@ while run:
     enemyList2 = [enemy9,enemy10,enemy11,enemy12,enemy13,enemy14,enemy15,enemy16,enemy17]
     allEnemyLists = [enemyList1,enemyList2]
     boss1 = Boss(1,15000,0)
-    boss2 = Boss(2,15000,500)
+    boss2 = Boss(2,15000,0)
     bossList = [boss1,boss2,boss1,boss1,boss1]
     player_group = pygame.sprite.Group()
     enemy_group = pygame.sprite.Group()
@@ -385,6 +395,7 @@ while run:
     boss_group = pygame.sprite.Group()
     coin_group = pygame.sprite.Group()
     ship = bruh.get_rect(topleft = (x,y))
+    Tutorial = True
     for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
@@ -572,9 +583,16 @@ while run:
                 if pygame.time.get_ticks() - player1.timer < 2000:
                     win.blit(red_cross, (70, 120))
                 boss_group.draw(win)
+                if bossList[level_selected].tookDamage:
+                    win.blit(took_damage, (1300,0))
                 healthBar = pygame.draw.rect(win,color=(156,0,36), rect=(75,65,player1.hp*2.2,30))
                 if level_selected == 1:
                     dash_counter()
+                if Tutorial:
+                    win.blit(icon_windwall,(1870,0))
+                    if icon_windwall.get_rect(topleft = (1870,0)).collidepoint(pygame.mouse.get_pos()) and event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                        Tutorial = False
+                        speed = 1
                 pygame.display.update()
                 if player1.hp <= 0:
                     loose = True
