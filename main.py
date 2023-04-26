@@ -324,13 +324,13 @@ class Player(pygame.sprite.Sprite):
                     self.cooldown = False
         print(self.cooldown)
 map = img.get_rect(topleft = (0,0))
-start_rect1 = start.get_rect(topleft = (275 , 675))
-start_rect2 = start.get_rect(topleft = (275 , 175))
+start_rect1 = start.get_rect(topleft = (535 , 670))
+start_rect2 = start.get_rect(topleft = (345 , 440))
 menu = True
 ticks = 0
 level_selected = 1
-level1_rect  = pygame.draw.rect(win,color=(156,0,36), rect=(350,750,50,50))
-level2_rect  = pygame.draw.rect(win,color=(156,0,36), rect=(350,250,50,50))
+level1_rect  = pygame.draw.rect(win,color=(156,0,36), rect=(610,745,50,50))
+level2_rect  = pygame.draw.rect(win,color=(156,0,36), rect=(430,515,50,50))
 timer_windwall = 0
 timer_dash = 0
 pauseScreen = False
@@ -422,8 +422,8 @@ while run:
                 break
             win.blit(img, map)
             win.blit(bruh, dingus)
-            level1_rect = pygame.draw.rect(win,color=(156,0,36), rect=(350,750,50,50))
-            level2_rect = pygame.draw.rect(win,color=(156,0,36), rect=(350,250,50,50))
+            level1_rect  = pygame.draw.rect(win,color=(156,0,36), rect=(610,745,50,50))
+            level2_rect  = pygame.draw.rect(win,color=(156,0,36), rect=(430,515,50,50))
             if dingus.colliderect(level1_rect):
                 win.blit(start, start_rect1)
             if dingus.colliderect(level2_rect):
