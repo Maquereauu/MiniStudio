@@ -435,7 +435,6 @@ class Boss(pygame.sprite.Sprite):
                 self.canShoot = False
         if self.type == 2:
             if self.rect.x <= 1920-self.rect.width and self.canShoot:
-                print("feu")
                 wall = Enemy(6,self.rect.x,self.y)
                 enemyList2.append(wall)
                 enemy_group.add(wall)
@@ -650,7 +649,6 @@ class Player(pygame.sprite.Sprite):
             if self.cooldown == True:
                 if pygame.time.get_ticks() - self.timer > 2000:
                     self.cooldown = False
-        print(self.cooldown)
 map = img.get_rect(topleft = (0,0))
 start_rect1 = start.get_rect(topleft = (535 , 670))
 start_rect2 = start.get_rect(topleft = (345 , 440))
@@ -938,7 +936,6 @@ while run:
                 healthBar = pygame.draw.rect(win,color=(156,0,36), rect=(75,65,player1.hp*2.2,30))
                 if level_selected == 1:
                     if nb_dash >= 1:
-                        print("test")
                         win.blit(piece, (75,125))
                         if nb_dash >= 2 :
                             win.blit(piece, (130 , 125))
