@@ -273,6 +273,8 @@ class Bullet(pygame.sprite.Sprite):
         if self.type == 4:
             self.x -= 800 * delta_time * speed
             self.rect.x = self.x
+            self.y += math.sin(pygame.time.get_ticks() * 0.5 * math.pi / 40)
+            self.rect.y = self.y
             if player1.player_rect.y >= self.rect.y:
                 self.y += 100 * delta_time * speed
                 self.rect.y = self.y
@@ -513,31 +515,32 @@ while run:
             ticks = time
             if pauseScreen != True:
                 if level_selected == 0:
-                    if allEnemyLists[level_selected][0].x <= 400:
-                        Tutorial = False
-                        speed = 1
-                    text1 = my_font.render("Dans ce niveau tu incarneras un aigle,", 1, pygame.Color("WHITE"))
-                    text2 = my_font.render("ces oiseaux étaient connus pour", 1, pygame.Color("WHITE"))
-                    text3 = my_font.render("être les 'rois' du ciel", 1, pygame.Color("WHITE"))
-                    if allEnemyLists[level_selected][0].x <= 1500:
-                        text1 = my_font.render("Oh non,un méchant chasseur!", 1, pygame.Color("WHITE"))
-                        text2 = my_font.render("", 1, pygame.Color("WHITE"))
-                        text3 = my_font.render("", 1, pygame.Color("WHITE"))
-                    if allEnemyLists[level_selected][0].x <= 1300:
-                        text1 = my_font.render("Ne t'en fais pas,Serge l'aigle peut", 1, pygame.Color("WHITE"))
-                        text2 = my_font.render("utiliser ses puissantes ailes", 1, pygame.Color("WHITE"))
-                        text3 = my_font.render("pour faire disparaître ces balles!", 1, pygame.Color("WHITE"))
-                    if allEnemyLists[level_selected][0].x <= 900:
-                            text1 = my_font.render("Appuie sur espace pour envoyer", 1, pygame.Color("WHITE"))
-                            text2 = my_font.render("une bourrasque de vent!", 1, pygame.Color("WHITE"))
+                    if Tutorial:
+                        if allEnemyLists[level_selected][0].x <= 400:
+                            Tutorial = False
+                            speed = 1
+                        text1 = my_font.render("Dans ce niveau tu incarneras un aigle,", 1, pygame.Color("WHITE"))
+                        text2 = my_font.render("ces oiseaux étaient connus pour", 1, pygame.Color("WHITE"))
+                        text3 = my_font.render("être les 'rois' du ciel", 1, pygame.Color("WHITE"))
+                        if allEnemyLists[level_selected][0].x <= 1500:
+                            text1 = my_font.render("Oh non,un méchant chasseur!", 1, pygame.Color("WHITE"))
+                            text2 = my_font.render("", 1, pygame.Color("WHITE"))
                             text3 = my_font.render("", 1, pygame.Color("WHITE"))
-                            if first:
-                                first = False
-                                pauseScreen = True
-                    if allEnemyLists[level_selected][0].x <= 888:
-                        text1 = my_font.render("Félicitations!", 1, pygame.Color("WHITE"))
-                        text2 = my_font.render("Tu peux également esquiver les balles ainsi", 1, pygame.Color("WHITE"))
-                        text3 = my_font.render("que les obstacles en te déplaçant", 1, pygame.Color("WHITE"))
+                        if allEnemyLists[level_selected][0].x <= 1300:
+                            text1 = my_font.render("Ne t'en fais pas,Serge l'aigle peut", 1, pygame.Color("WHITE"))
+                            text2 = my_font.render("utiliser ses puissantes ailes", 1, pygame.Color("WHITE"))
+                            text3 = my_font.render("pour faire disparaître ces balles!", 1, pygame.Color("WHITE"))
+                        if allEnemyLists[level_selected][0].x <= 900:
+                                text1 = my_font.render("Appuie sur espace pour envoyer", 1, pygame.Color("WHITE"))
+                                text2 = my_font.render("une bourrasque de vent!", 1, pygame.Color("WHITE"))
+                                text3 = my_font.render("", 1, pygame.Color("WHITE"))
+                                if first:
+                                    first = False
+                                    pauseScreen = True
+                        if allEnemyLists[level_selected][0].x <= 888:
+                            text1 = my_font.render("Félicitations!", 1, pygame.Color("WHITE"))
+                            text2 = my_font.render("Tu peux également esquiver les balles ainsi", 1, pygame.Color("WHITE"))
+                            text3 = my_font.render("que les obstacles en te déplaçant", 1, pygame.Color("WHITE"))
                 if level_selected == 1:
                     if allEnemyLists[level_selected][1].x <= 0:
                         Tutorial = False
