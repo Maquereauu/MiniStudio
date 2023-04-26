@@ -46,14 +46,13 @@ model_fireball = pygame.transform.rotate(model_fireball, 45)
 icon_windwall = pygame.image.load("img/WindWall.png").convert_alpha()
 icon_windwall = pygame.transform.scale(icon_windwall, (50 , 50))
 icon_windwall.set_alpha(150)
-piece = pygame.image.load("img/coin.png").convert_alpha()
-piece = pygame.transform.scale_by(piece,(50,50))
 red_cross = pygame.image.load("img/Red_Cross.png").convert_alpha()
 red_cross = pygame.transform.scale(red_cross, (60 , 60))
 x_background = 0
 speed = 1
 model_coin0 = pygame.image.load("img/coin.png").convert_alpha()
 model_coin = pygame.transform.scale_by(model_coin0,1/4)
+piece =  pygame.transform.scale(model_coin0, (50 , 50))
 
 def fps_counter():
     fps = str(int(clock.get_fps()))
@@ -106,7 +105,6 @@ class Boss(pygame.sprite.Sprite):
                 self.canShoot = False
         if self.type == 2:
             if self.rect.x <= 1920-self.rect.width and self.canShoot:
-                print("feu")
                 wall = Enemy(6,self.rect.x,self.y)
                 enemyList2.append(wall)
                 enemy_group.add(wall)
@@ -321,7 +319,6 @@ class Player(pygame.sprite.Sprite):
             if self.cooldown == True:
                 if pygame.time.get_ticks() - self.timer > 2000:
                     self.cooldown = False
-        print(self.cooldown)
 map = img.get_rect(topleft = (0,0))
 start_rect1 = start.get_rect(topleft = (535 , 670))
 start_rect2 = start.get_rect(topleft = (345 , 440))
@@ -526,7 +523,7 @@ while run:
                 if level_selected == 1:
                     for i in range(len(coinList)):
                         if coinList[i].type == 1:
-                            if player1.player_rect.colliderect(coinList[i].rect) and coinList[i].isdead == False:
+                            if player1.player_rect.colliderect(coinList[i].rect) and coinList[i].isdead == False and nb_dash <= 4:
                                 nb_dash += 1
                                 coinList[i].isdead = True
                                 coinList[i].kill()
@@ -564,9 +561,14 @@ while run:
                 healthBar = pygame.draw.rect(win,color=(156,0,36), rect=(75,65,player1.hp*2.2,30))
                 if level_selected == 1:
                     if nb_dash >= 1:
+                        print("test")
                         win.blit(piece, (75,125))
                         if nb_dash >= 2 :
                             win.blit(piece, (130 , 125))
+                            if nb_dash >= 3 :
+                                win.blit(piece, (185 , 125))
+                                if nb_dash == 4 :
+                                    win.blit(piece, (240 , 125))
                 pygame.display.update()
                 if player1.hp <= 0:
                     menu = True
