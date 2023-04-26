@@ -244,7 +244,8 @@ class Enemy(pygame.sprite.Sprite):
             if player1.windwall_rect.colliderect(self.rect) and ((keys[pygame.K_SPACE] and player1.cooldown == False) or (pygame.time.get_ticks() - timer_dash < 1000 and pygame.time.get_ticks() - timer_dash != 0)):
                 self.kill()
                 boss2.timer = pygame.time.get_ticks()
-                boss2.hp -= 1
+                if boss2.rect.x <= 1920-self.rect.width*0.75:
+                    boss2.hp -= 1
             if player1.player_rect.colliderect(self.rect):
                 self.kill()
         if self.rect.x+5 < 0-self.rect.width:
