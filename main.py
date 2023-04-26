@@ -456,8 +456,8 @@ while run:
             if level_selected == 0:
                 win.fill((0,0,0))
                 win.blit(player1.player_surf,(800,300))
-                text1 = my_font.render("Grâce à ses ailes puissantes,Monsieur oiseau peut créer des bourrasques de vent,", 1, pygame.Color("WHITE"))
-                text2 = my_font.render("permettant ainsi de contre les balles des méchants chasseurs.", 1, pygame.Color("WHITE"))
+                text1 = my_font.render("Grâce à ses ailes puissantes,Serge l'aigle peut créer des bourrasques de vent,", 1, pygame.Color("WHITE"))
+                text2 = my_font.render("permettant ainsi de contrer les balles des méchants chasseurs.", 1, pygame.Color("WHITE"))
                 win.blit(text1,(400,600))
                 win.blit(text2,(400,650))
                 if pygame.time.get_ticks() - preGameTimer > 3000:
