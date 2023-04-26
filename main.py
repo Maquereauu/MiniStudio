@@ -47,9 +47,9 @@ model_fireball2 = pygame.transform.rotate(model_fireball, 180)
 icon_windwall = pygame.image.load("img/WindWall.png").convert_alpha()
 icon_windwall = pygame.transform.scale(icon_windwall, (50 , 50))
 icon_windwall.set_alpha(150)
-took_damage = pygame.Surface((1000,750))
+took_damage = pygame.Surface((1000,1080))
 took_damage.set_alpha(128)
-took_damage.fill((255,255,255))
+took_damage.fill((255,0,0))
 red_cross = pygame.image.load("img/Red_Cross.png").convert_alpha()
 red_cross = pygame.transform.scale(red_cross, (60 , 60))
 x_background = 0
@@ -572,7 +572,7 @@ while run:
                     win.blit(red_cross, (70, 120))
                 boss_group.draw(win)
                 if bossList[level_selected].tookDamage:
-                    win.blit(took_damage, (0,0))
+                    win.blit(took_damage, (1300,0))
                 healthBar = pygame.draw.rect(win,color=(156,0,36), rect=(75,65,player1.hp*2.2,30))
                 if level_selected == 1:
                     dash_counter()
