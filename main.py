@@ -495,7 +495,7 @@ while run:
                 if player1.type == 1 and keys[pygame.K_SPACE] and player1.cooldown == False:
                     timer_windwall = pygame.time.get_ticks()
                 boss_group.draw(win)
-                win.blit(hp_bar, (0, -100))
+                win.blit(hp_bar, (-50, -100))
                 healthBar  = pygame.draw.rect(win,color=(156,0,36), rect=(200,110,player1.hp*3,50))
                 pygame.display.update()
                 if player1.hp <= 0:
