@@ -85,11 +85,6 @@ model_coin0 = pygame.image.load("img/coin.png").convert_alpha()
 model_coin = pygame.transform.scale_by(model_coin0,1/4)
 piece =  pygame.transform.scale(model_coin0, (50 , 50))
 
-def fps_counter():
-    fps = str(int(clock.get_fps()))
-    fps_t = my_font.render(fps , 1, pygame.Color("RED"))
-    win.blit(fps_t,(0,0))
-
 class Boss(pygame.sprite.Sprite):
     def __init__(self,type,x,y):
         super().__init__()
