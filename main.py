@@ -1,7 +1,6 @@
-from typing import KeysView
 import pygame
-import sys
 import math
+
 pygame.init()
 pygame.display.set_caption("masterclass")
 win=pygame.display.set_mode((1920,1080))
@@ -47,7 +46,8 @@ model_enemy4_1 = pygame.transform.rotate(model_enemy4, 270)
 model_enemy4_2 = pygame.transform.rotate(model_enemy4, 225)
 model_enemy5 = pygame.image.load("img/wind_turbine.png").convert_alpha()
 model_enemy6 = pygame.image.load("img/broken_wall.png").convert_alpha()
-model_bullet0= pygame.image.load("img/Bullet.png").convert_alpha()
+model_enemy6 = pygame.transform.scale(model_enemy6,(600 , 450))
+model_bullet0 = pygame.image.load("img/Bullet.png").convert_alpha()
 model_bullet = pygame.transform.scale_by(model_bullet0,1/4)
 model_fireball = pygame.image.load("img/fireball.png").convert_alpha()
 model_fireball = pygame.transform.scale_by(model_fireball,1/2)
@@ -59,6 +59,14 @@ icon_windwall.set_alpha(150)
 took_damage = pygame.Surface((1000,1080))
 took_damage.set_alpha(128)
 took_damage.fill((255,0,0))
+dialog_box = pygame.image.load("img/dialog_box.png").convert_alpha()
+dialog_box = pygame.transform.scale(dialog_box, (1000 , 325))
+robot_model1 = pygame.image.load("img/little_robot.png").convert_alpha()
+robot_model1 = pygame.transform.scale(robot_model1, (700 , 600))
+robot_model2 = pygame.image.load("img/little_robot_happy.png").convert_alpha()
+robot_model2 = pygame.transform.scale(robot_model2, (700 , 600))
+robot_model3 = pygame.image.load("img/little_robot_sad.png").convert_alpha()
+robot_model3 = pygame.transform.scale(robot_model3, (700 , 600))
 red_cross = pygame.image.load("img/Red_Cross.png").convert_alpha()
 red_cross = pygame.transform.scale(red_cross, (60 , 60))
 x_background = 0
@@ -180,7 +188,7 @@ class Enemy(pygame.sprite.Sprite):
             self.rect = self.image.get_rect(topleft = (x,y))
             self.damage = 1000
         if self.type == 6:#mur cassable
-            self.image = model_enemy1
+            self.image = model_enemy6
             self.rect = self.image.get_rect(topleft = (x,y))
             self.damage = 1
 
@@ -288,8 +296,8 @@ class Player(pygame.sprite.Sprite):
     def __init__(self,type):
         super().__init__()
         self.type = type
-        self.x = 50
-        self.y = 50
+        self.x = 100
+        self.y = 700
         self.Alive = True
         self.cooldown = False
         self.timer = 0
@@ -298,28 +306,29 @@ class Player(pygame.sprite.Sprite):
             self.hp = self.max_hp
             self.player_surf0 = pygame.image.load("img/Bird.png").convert_alpha()
             self.player_surf = pygame.transform.scale_by(self.player_surf0,1/3)
-            self.player_rect = self.player_surf.get_rect(topleft = (x,y))
+            self.player_rect = self.player_surf.get_rect(topleft = (self.x,self.y))
             self.height = self.player_surf.get_height()
             self.windwall_surf = pygame.image.load("img/WindWall.png").convert_alpha()
+            self.windwall_surf = pygame.transform.scale(self.windwall_surf , (539/3 , 386/3))
             self.windwall_rect = self.windwall_surf.get_rect(topleft = (self.player_rect.x,self.player_rect.y))
         if self.type == 2:#Oiseau 2
             self.max_hp = 80
             self.hp = self.max_hp
             self.player_surf0 = pygame.image.load("img/Bird.png").convert_alpha()
             self.player_surf = pygame.transform.scale_by(self.player_surf0,1/4)
-            self.player_rect = self.player_surf.get_rect(topleft = (x,y))
+            self.player_rect = self.player_surf.get_rect(topleft = (self.x,self.y))
             self.height = self.player_surf.get_height()
         if self.type == 3:#Oiseau 3
             self.player_surf = pygame.image.load("img/pitie.png").convert()
-            self.player_rect = self.player_surf.get_rect(topleft = (x,y))
+            self.player_rect = self.player_surf.get_rect(topleft = (self.x,self.y))
             self.height = self.player_surf.get_height()
         if self.type == 4:#Oiseau 4
             self.player_surf = pygame.image.load("img/pitie.png").convert()
-            self.player_rect = self.player_surf.get_rect(topleft = (x,y))
+            self.player_rect = self.player_surf.get_rect(topleft = (self.x,self.y))
             self.height = self.player_surf.get_height()
         if self.type == 5:#Oiseau 5
             self.player_surf = pygame.image.load("img/pitie.png").convert()
-            self.player_rect = self.player_surf.get_rect(topleft = (x,y))
+            self.player_rect = self.player_surf.get_rect(topleft = (self.x,self.y))
             self.height = self.player_surf.get_height()
 
     def update(self):
@@ -370,7 +379,8 @@ while run:
     enemy8 = Enemy(2,12000,700)
     #niveau 2
     enemy9 = Enemy(6,1500,700)
-    enemy10 = Enemy(5,2500,0)
+    enemy18 = Enemy(1,2500,-100)
+    enemy10 = Enemy(5,2500,400)
     enemy11 = Enemy(4,5500,850)
     enemy12 = Enemy(1,7000,-100)
     enemy13 = Enemy(5,7000,700)
@@ -382,9 +392,10 @@ while run:
     coin2 = Coin(1,2000, 50)
     coin3 = Coin(1,4000, 700)
     coin4 = Coin(1,5600, 50)
-    coinList = [coin1, coin2, coin3, coin4]
+    coin5 = Coin(1,500, 500)
+    coinList = [coin1, coin2, coin3, coin4, coin5]
     enemyList1 = [enemy1,enemy2,enemy3,enemy4,enemy5,enemy6,enemy7,enemy8]
-    enemyList2 = [enemy9,enemy10,enemy11,enemy12,enemy13,enemy14,enemy15,enemy16,enemy17]
+    enemyList2 = [enemy9,enemy10,enemy11,enemy12,enemy13,enemy14,enemy15,enemy16,enemy17,enemy18]
     allEnemyLists = [enemyList1,enemyList2]
     boss1 = Boss(1,15000,0)
     boss2 = Boss(2,15000,0)
@@ -396,6 +407,7 @@ while run:
     coin_group = pygame.sprite.Group()
     ship = bruh.get_rect(topleft = (x,y))
     Tutorial = True
+    first = True
     for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
@@ -474,37 +486,64 @@ while run:
                 preGame = False
             if keys[pygame.K_SPACE]:
                 preGame = False
-            text3 = my_font.render("Appuyez sur espace pour commencer", 1, pygame.Color("WHITE"))
+            text3_pregame = my_font.render("Appuyez sur espace pour commencer", 1, pygame.Color("WHITE"))
             if level_selected == 0:
                 win.fill((0,0,0))
                 win.blit(player1.player_surf,(800,300))
-                text1 = my_font.render("Grâce à ses ailes puissantes,Monsieur oiseau peut créer des bourrasques de vent,", 1, pygame.Color("WHITE"))
-                text2 = my_font.render("permettant ainsi de contre les balles des méchants chasseurs.", 1, pygame.Color("WHITE"))
-                win.blit(text1,(400,600))
-                win.blit(text2,(400,650))
+                text1_pregame = my_font.render("Grâce à ses ailes puissantes,Serge l'aigle peut créer des bourrasques de vent,", 1, pygame.Color("WHITE"))
+                text2_pregame = my_font.render("permettant ainsi de contre les balles des méchants chasseurs.", 1, pygame.Color("WHITE"))
+                win.blit(text1_pregame,(400,600))
+                win.blit(text2_pregame,(400,650))
                 if pygame.time.get_ticks() - preGameTimer > 3000:
-                    win.blit(text3,(400,850))
+                    win.blit(text3_pregame,(400,850))
                 pygame.display.update()
             if level_selected == 1:
                 win.fill((0,0,0))
                 win.blit(player1.player_surf,(800,300))
-                text1 = my_font.render("Grâce à sa vitesse de plongé impressionnante,Monsieur oiseau peut utiliser son dash,", 1, pygame.Color("WHITE"))
-                text2 = my_font.render("lui permettant ainsi de briser les murs fissurés.", 1, pygame.Color("WHITE"))
-                win.blit(text1,(400,600))
-                win.blit(text2,(400,650))
+                text1_pregame = my_font.render("Grâce à sa vitesse de plongé impressionnante,Monsieur oiseau peut utiliser son dash,", 1, pygame.Color("WHITE"))
+                text2_pregame = my_font.render("lui permettant ainsi de briser les murs fissurés.", 1, pygame.Color("WHITE"))
+                win.blit(text1_pregame,(400,600))
+                win.blit(text2_pregame,(400,650))
                 if pygame.time.get_ticks() - preGameTimer > 3000:
-                    win.blit(text3,(400,850))
+                    win.blit(text3_pregame,(400,850))
                 pygame.display.update()
         while player1.Alive:
-            if allEnemyLists[level_selected][0].x <= 0:
-                Tutorial = False
-                speed = 1
-            if Tutorial:
-                speed = 0.25
             time = pygame.time.get_ticks()
             delta_time = (time - ticks) / 1000
             ticks = time
             if pauseScreen != True:
+                if level_selected == 0:
+                    if allEnemyLists[level_selected][0].x <= 400:
+                        Tutorial = False
+                        speed = 1
+                    text1 = my_font.render("Dans ce niveau tu incarneras un aigle,", 1, pygame.Color("WHITE"))
+                    text2 = my_font.render("ces oiseaux étaient connus pour", 1, pygame.Color("WHITE"))
+                    text3 = my_font.render("être les 'rois' du ciel", 1, pygame.Color("WHITE"))
+                    if allEnemyLists[level_selected][0].x <= 1500:
+                        text1 = my_font.render("Oh non,un méchant chasseur!", 1, pygame.Color("WHITE"))
+                        text2 = my_font.render("", 1, pygame.Color("WHITE"))
+                        text3 = my_font.render("", 1, pygame.Color("WHITE"))
+                    if allEnemyLists[level_selected][0].x <= 1300:
+                        text1 = my_font.render("Ne t'en fais pas,Serge l'aigle peut", 1, pygame.Color("WHITE"))
+                        text2 = my_font.render("utiliser ses puissantes ailes", 1, pygame.Color("WHITE"))
+                        text3 = my_font.render("pour faire disparaître ces balles!", 1, pygame.Color("WHITE"))
+                    if allEnemyLists[level_selected][0].x <= 900:
+                            text1 = my_font.render("Appuie sur espace pour envoyer", 1, pygame.Color("WHITE"))
+                            text2 = my_font.render("une bourrasque de vent!", 1, pygame.Color("WHITE"))
+                            text3 = my_font.render("", 1, pygame.Color("WHITE"))
+                            if first:
+                                first = False
+                                pauseScreen = True
+                    if allEnemyLists[level_selected][0].x <= 888:
+                        text1 = my_font.render("Félicitations!", 1, pygame.Color("WHITE"))
+                        text2 = my_font.render("Tu peux également esquiver les balles ainsi", 1, pygame.Color("WHITE"))
+                        text3 = my_font.render("que les obstacles en te déplaçant", 1, pygame.Color("WHITE"))
+                if level_selected == 1:
+                    if allEnemyLists[level_selected][1].x <= 0:
+                        Tutorial = False
+                        speed = 1
+                if Tutorial:
+                    speed = 0.25
                 background_x -= 300 * delta_time * speed
                 background2_x -= 300 * delta_time * speed
                 if background_x <= (-1920)*3 + 1:
@@ -519,24 +558,25 @@ while run:
                 if keys[pygame.K_ESCAPE]:
                     player1.Alive = False
                     run = False
-                if keys[pygame.K_f]:
-                    pauseScreen = True
-                if keys[pygame.K_LEFT] and player1.player_rect.x > 0:
-                    player1.player_rect.x-=vel * delta_time * speed
-                if keys[pygame.K_RIGHT] and player1.player_rect.x < 200:
-                    player1.player_rect.x+=vel * delta_time * speed
-                if keys[pygame.K_UP] and player1.player_rect.y > 0:
-                    player1.player_rect.y -= vel * delta_time * speed
-                    for i in range(len(allEnemyLists[level_selected])):
-                        if allEnemyLists[level_selected][i].type == 1:
-                            if player1.player_rect.colliderect(allEnemyLists[level_selected][i].rect):
-                                player1.player_rect.y += vel * delta_time * speed
-                if keys[pygame.K_DOWN] and player1.player_rect.y < 1080 - player1.height:
-                    player1.player_rect.y += vel * delta_time * speed
-                    for i in range(len(allEnemyLists[level_selected])):
-                        if allEnemyLists[level_selected][i].type == 1:
-                            if player1.player_rect.colliderect(allEnemyLists[level_selected][i].rect):
-                                player1.player_rect.y -= vel * 1.2 * delta_time * speed
+                if Tutorial != 1:
+                    if keys[pygame.K_f]:
+                        pauseScreen = True
+                    if keys[pygame.K_LEFT] and player1.player_rect.x > 0:
+                        player1.player_rect.x-=vel * delta_time * speed
+                    if keys[pygame.K_RIGHT] and player1.player_rect.x < 200:
+                        player1.player_rect.x+=vel * delta_time * speed
+                    if keys[pygame.K_UP] and player1.player_rect.y > 0:
+                        player1.player_rect.y -= vel * delta_time * speed
+                        for i in range(len(allEnemyLists[level_selected])):
+                            if allEnemyLists[level_selected][i].type == 1:
+                                if player1.player_rect.colliderect(allEnemyLists[level_selected][i].rect):
+                                    player1.player_rect.y += vel * delta_time * speed
+                    if keys[pygame.K_DOWN] and player1.player_rect.y < 1080 - player1.height:
+                        player1.player_rect.y += vel * delta_time * speed
+                        for i in range(len(allEnemyLists[level_selected])):
+                            if allEnemyLists[level_selected][i].type == 1:
+                                if player1.player_rect.colliderect(allEnemyLists[level_selected][i].rect):
+                                    player1.player_rect.y -= vel * 1.2 * delta_time * speed
                 bullet_group.update()
                 player_group.update()
                 enemy_group.update()
@@ -575,14 +615,26 @@ while run:
                         win.blit(player1.windwall_surf,player1.windwall_rect)
                     else:
                         timer_windwall = 0
-                win.blit(hp_bar, (-30, -60))
+                win.blit(hp_bar, (-30, -60))    
                 if level_selected == 0:
                     win.blit(icon_windwall, (75, 125))
-                    if player1.type == 1 and keys[pygame.K_SPACE] and player1.cooldown == False:
-                        timer_windwall = pygame.time.get_ticks()
+                if player1.type == 1 and keys[pygame.K_SPACE] and player1.cooldown == False:
+                    timer_windwall = pygame.time.get_ticks()
+                if level_selected == 0:
                     if pygame.time.get_ticks() - player1.timer < 2000:
                         win.blit(red_cross, (70, 120))
                 boss_group.draw(win)
+                if Tutorial:
+                    win.blit(dialog_box,(500,10))
+                    win.blit(text1,(600,100))
+                    win.blit(text2,(600,150))
+                    win.blit(text3,(600,200))
+                    if allEnemyLists[level_selected][0].x <= 888:
+                        win.blit(robot_model2,(700,0))
+                    elif allEnemyLists[level_selected][0].x <= 1500 and allEnemyLists[level_selected][0].x >= 1300:
+                        win.blit(robot_model3,(1000,-275))
+                    else:
+                        win.blit(robot_model1,(1000,-275))
                 if bossList[level_selected].tookDamage:
                     win.blit(took_damage, (1300,0))
                 healthBar = pygame.draw.rect(win,color=(156,0,36), rect=(75,65,player1.hp*2.2,30))
@@ -605,27 +657,39 @@ while run:
                     loose = True
                     break
             else:
-                resume = pygame.draw.rect(win,color=(156,0,36), rect=(500,500,player1.hp*3,50))
-                retry = pygame.draw.rect(win,color=(156,0,36), rect=(1000,500,player1.hp*3,50))
-                lobby = pygame.draw.rect(win,color=(156,0,36), rect=(1500,500,player1.hp*3,50))
-                for event in pygame.event.get():
-                    if resume.collidepoint(pygame.mouse.get_pos()) and event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                if Tutorial == True:
+                    keys = pygame.key.get_pressed()
+                    if keys[pygame.K_SPACE]:
                         pauseScreen = False
-                    if retry.collidepoint(pygame.mouse.get_pos()) and event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                    if keys[pygame.K_ESCAPE]:
                         player1.Alive = False
-                        pauseScreen = False
-                        menu = False
-                    if lobby.collidepoint(pygame.mouse.get_pos()) and event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                        run = False
+                    for event in pygame.event.get():
+                        if event.type == pygame.QUIT:
+                            run = False
+                            player1.Alive = False
+                else:
+                    resume = pygame.draw.rect(win,color=(156,0,36), rect=(500,500,300,50))
+                    retry = pygame.draw.rect(win,color=(156,0,36), rect=(1000,500,300,50))
+                    lobby = pygame.draw.rect(win,color=(156,0,36), rect=(1500,500,300,50))
+                    for event in pygame.event.get():
+                        if resume.collidepoint(pygame.mouse.get_pos()) and event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                            pauseScreen = False
+                        if retry.collidepoint(pygame.mouse.get_pos()) and event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                            player1.Alive = False
+                            pauseScreen = False
+                            menu = False
+                        if lobby.collidepoint(pygame.mouse.get_pos()) and event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                            player1.Alive = False
+                            menu = True
+                            pauseScreen = False
+                    if player1.Alive == False and pauseScreen == False and menu == False:
+                        break
+                    keys = pygame.key.get_pressed()
+                    if keys[pygame.K_ESCAPE]:
                         player1.Alive = False
-                        menu = True
-                        pauseScreen = False
-                if player1.Alive == False and pauseScreen == False and menu == False:
-                    break
-                keys = pygame.key.get_pressed()
-                if keys[pygame.K_ESCAPE]:
-                    player1.Alive = False
-                    run = False
-                pygame.display.update()
+                        run = False
+                    pygame.display.update()
             if player1.Alive == False:
                 menu = True
         while loose:
