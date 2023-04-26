@@ -574,7 +574,14 @@ while run:
                 boss_group.draw(win)
                 healthBar = pygame.draw.rect(win,color=(156,0,36), rect=(75,65,player1.hp*2.2,30))
                 if level_selected == 1:
-                    dash_counter()
+                    if nb_dash >= 1 :
+                        win.blit(piece , (75 , 125))
+                        if nb_dash >= 2:
+                            win.blit(piece , (130 , 125))
+                            if nb_dash >= 3:
+                                win.blit(piece, (185 , 125))
+                                if nb_dash == 4:
+                                    win.blit(piece, (240 , 125))
                 pygame.display.update()
                 if player1.hp <= 0:
                     loose = True
